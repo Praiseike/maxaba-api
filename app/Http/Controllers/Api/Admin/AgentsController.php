@@ -57,7 +57,7 @@ class AgentsController extends ApiController
     public function getStats()
     {
         $data = [
-            "total_agents" => User::agents()->count(),
+            "total_agents" => User::agents()->where('account_status', Status::ACTIVE)->count(),
             "pending_agents" => User::agents()->where('account_status', Status::PENDING)->count(),
 
         ];

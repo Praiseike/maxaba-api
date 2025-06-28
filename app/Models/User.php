@@ -72,7 +72,7 @@ class User extends Authenticatable
 
     public function scopeAgents($query)
     {
-        return $query->where('account_type', User::TYPE_AGENT)->where('account_status', Status::ACTIVE);
+        return $query->where('account_type', User::TYPE_AGENT);
     }
 
 
