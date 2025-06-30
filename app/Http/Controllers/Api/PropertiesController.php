@@ -142,6 +142,17 @@ class PropertiesController extends ApiController
         return $this->respondWithSuccess("Property fetched successfully", $property);
     }
 
+    public function getPropertyBySlug(Request $request,string $slug)
+    {
+        $property = Property::with('category')->where('slug', $slug)->first();
+
+        if (!$property) {
+            return $this->errorNotFound('Property not found');
+        }
+
+        return $this->respondWithSuccess("Property fetched successfully", $property);
+    }
+
     public function deleteProperty(Request $request, $id)
     {
         $property = Property::find($id);
@@ -192,6 +203,7 @@ class PropertiesController extends ApiController
 
         $properties = Property::where('title', 'LIKE', "%{$query}%")
             ->orWhere('description', 'LIKE', "%{$query}%")
+            ->orWhere('slug', 'LIKE', "%{$query}%")
             ->orWhereJsonContains('amenities', $query)
             ->with('category')
             ->paginate();
