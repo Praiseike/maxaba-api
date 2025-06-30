@@ -36,10 +36,10 @@ class PropertiesController extends ApiController
             'offer_type' => 'required|in:rent,sale',
             'offer_duration' => 'nullable|string',
             'other_information' => 'nullable',
-            'charges' => 'required_if:offer_type,rent',
-            'charges.agent_percentage' => 'required|numeric',
-            'charges.caution_percentage' => 'required|numeric',
-            'charges.legal_percentage' => 'required|numeric',
+            'charges' => 'nullable|required_if:offer_type,rent',
+            'charges.agent_percentage' => 'required_if:charges|numeric',
+            'charges.caution_percentage' => 'required_if:charges|numeric',
+            'charges.legal_percentage' => 'required_if:charges|numeric',
         ]);
 
         $imagePaths = [];
