@@ -23,7 +23,6 @@ class PropertiesController extends ApiController
             'category_id' => 'nullable|exists:categories,id',
             'location' => 'required|string',
             'title' => 'required|string',
-            // 'location.address' => 'required|string', // Optional: nested location validation
             'price' => 'required|numeric|min:0',
             'description' => 'required|string',
             'bedrooms' => 'required|integer|min:0',
@@ -35,13 +34,15 @@ class PropertiesController extends ApiController
             'files.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'offer_type' => 'required|in:rent,sale',
             'offer_duration' => 'nullable|string',
-            'other_information' => 'nullable',
-            'charges' => 'nullable|required_if:offer_type,rent',
-            'charges.agent_percentage' => 'required_if:charges|numeric',
-            'charges.caution_percentage' => 'required_if:charges|numeric',
-            'charges.legal_percentage' => 'required_if:charges|numeric',
+            'other_information' => 'nullable|array',
+        
+            // Make charges required as an array if offer_type is rent
+            'charges' => 'required_if:offer_type,rent|array',
+            'charges.agent_percentage' => 'required_if:offer_type,rent|numeric|min:0',
+            'charges.caution_percentage' => 'required_if:offer_type,rent|numeric|min:0',
+            'charges.legal_percentage' => 'required_if:offer_type,rent|numeric|min:0',
         ]);
-
+        
         $imagePaths = [];
 
         foreach ($request->file('files') as $image) {
