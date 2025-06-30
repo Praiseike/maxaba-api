@@ -19,8 +19,9 @@ Route::post('/auth/verify', [AuthController::class, 'verifyToken']);
 // Public property-related routes
 Route::prefix('open')->group(function(){
     Route::prefix('properties')->group(function () {
-        Route::get('/search', [PropertiesController::class, 'searchProperties']);
+        Route::get('/search', [PropertiesController::class, 'searchProperties']);        
         Route::get('/', [PropertiesController::class, 'getProperties']);
+        Route::get('/i/{slug}', [PropertiesController::class, 'getPropertyBySlug']);
         Route::get('/{id}', [PropertiesController::class, 'getProperty']);
     });
     
