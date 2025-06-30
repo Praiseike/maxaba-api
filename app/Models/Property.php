@@ -87,7 +87,6 @@ class Property extends Model
         });
     }
 
-
     public function generateSlug(): string
     {
         $parts = [
@@ -97,7 +96,7 @@ class Property extends Model
             "{$this->livingrooms}-living",
         ];
 
-
+        // Include up to 3 amenities for brevity
         if (is_array($this->amenities)) {
             $amenityPart = collect($this->amenities)
                 ->take(3)
@@ -106,8 +105,23 @@ class Property extends Model
             $parts[] = $amenityPart;
         }
 
-        return Str::slug(implode(' ', $parts));
+        // Base slug
+        $baseSlug = Str::slug(implode(' ', $parts));
+        $slug = $baseSlug;
+        $counter = 1;
+
+        // Check for uniqueness
+        while (
+            self::where('slug', $slug)
+                ->when($this->exists, fn($query) => $query->where('id', '!=', $this->id))
+                ->exists()
+        ) {
+            $slug = $baseSlug . '-' . $counter++;
+        }
+
+        return $slug;
     }
+
 
     public function user()
     {
