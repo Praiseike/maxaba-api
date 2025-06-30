@@ -18,7 +18,7 @@ class PropertiesController extends ApiController
     public function store(Request $request)
     {
         $user = auth()->user();
-        if(!$user->isAgent() || $user->account_status != Status::ACTIVE) {
+        if (!$user->isAgent() || $user->account_status != Status::ACTIVE) {
             return $this->errorForbidden("Must be an approved agent");
         }
         $validated = $request->validate([
@@ -26,7 +26,6 @@ class PropertiesController extends ApiController
             'category_id' => 'nullable|exists:categories,id',
             'location' => 'required|string',
             'title' => 'required|string',
-            // 'location.address' => 'required|string', // Optional: nested location validation
             'price' => 'required|numeric|min:0',
             'description' => 'required|string',
             'bedrooms' => 'required|integer|min:0',
@@ -38,11 +37,13 @@ class PropertiesController extends ApiController
             'files.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'offer_type' => 'required|in:rent,sale',
             'offer_duration' => 'nullable|string',
-            'other_information' => 'nullable',
-            'charges' => 'required_if:offer_type,rent',
-            'charges.agent_percentage' => 'required|numeric',
-            'charges.caution_percentage' => 'required|numeric',
-            'charges.legal_percentage' => 'required|numeric',
+            'other_information' => 'nullable|array',
+
+            // Make charges required as an array if offer_type is rent
+            'charges' => 'required_if:offer_type,rent|array',
+            'charges.agent_percentage' => 'required_if:offer_type,rent|numeric|min:0',
+            'charges.caution_percentage' => 'required_if:offer_type,rent|numeric|min:0',
+            'charges.legal_percentage' => 'required_if:offer_type,rent|numeric|min:0',
         ]);
 
         $imagePaths = [];
@@ -82,7 +83,7 @@ class PropertiesController extends ApiController
             data: $property,
         );
 
-        \Log::info( json_encode($response));
+        \Log::info(json_encode($response));
         return $response;
     }
 
