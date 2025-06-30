@@ -68,7 +68,6 @@ class PropertiesController extends ApiController
             'offer_duration' => $validated['offer_duration'],
             'amenities' => $validated['amenities'],
             'images' => $imagePaths,
-            'slug' => str_slug($validated['title']) . '-' . time(),
             'status' => 'pending',
             'published' => false,
             'verified' => false,

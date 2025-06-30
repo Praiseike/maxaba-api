@@ -33,8 +33,10 @@ class PropertiesController extends ApiController
             'amenities.*' => 'string|max:255',
             'files' => 'required|array|min:1',
             'files.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'offer_type' => 'required|in:rent,sale',
+            'offer_duration' => 'nullable|string',
             'other_information' => 'nullable',
-            'charges' => 'required',
+            'charges' => 'required_if:offer_type,rent',
             'charges.agent_percentage' => 'required|numeric',
             'charges.caution_percentage' => 'required|numeric',
             'charges.legal_percentage' => 'required|numeric',
@@ -49,9 +51,9 @@ class PropertiesController extends ApiController
 
         $property = Property::create([
             'title' => $request->title,
-            'user_id' => $user->id,
             'occupant_type' => $validated['occupant_type'],
             'rejection_reason' => "",
+            'admin_id' => $user->id,
             'category_id' => $validated['category_id'],
             'location' => json_decode($validated['location']),
             'price' => $validated['price'],
@@ -59,6 +61,8 @@ class PropertiesController extends ApiController
             'bedrooms' => $validated['bedrooms'],
             'bathrooms' => $validated['bathrooms'],
             'livingrooms' => $validated['livingrooms'],
+            'offer_type' => $validated['offer_type'],
+            'offer_duration' => $validated['offer_duration'],
             'amenities' => $validated['amenities'],
             'images' => $imagePaths,
             'status' => 'pending',
@@ -67,6 +71,7 @@ class PropertiesController extends ApiController
             'other_information' => $validated['other_information'],
             'charges' => $validated['charges'],
         ]);
+
 
 
         Notification::send(Admin::all(), new NewPropertyNotification($property));

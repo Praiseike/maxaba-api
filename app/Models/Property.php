@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Str;
+
 
 class Property extends Model
 {
@@ -63,15 +65,49 @@ class Property extends Model
     }
 
 
-    public function getImagesAttribute($value){
+    public function getImagesAttribute($value)
+    {
         return array_map(function ($image) {
-            return url("/storage/".$image);
+            return url("/storage/" . $image);
         }, json_decode($value, true));
     }
 
 
     // relationships
 
+    protected static function booted()
+    {
+        static::creating(function ($property) {
+            $property->slug = $property->generateSlug();
+        });
+
+        static::updating(function ($property) {
+            // optionally re-generate slug if title/rooms/amenities change
+            $property->slug = $property->generateSlug();
+        });
+    }
+
+
+    public function generateSlug(): string
+    {
+        $parts = [
+            $this->title,
+            "{$this->bedrooms}-bed",
+            "{$this->bathrooms}-bath",
+            "{$this->livingrooms}-living",
+        ];
+
+
+        if (is_array($this->amenities)) {
+            $amenityPart = collect($this->amenities)
+                ->take(3)
+                ->map(fn($a) => Str::slug($a))
+                ->implode('-');
+            $parts[] = $amenityPart;
+        }
+
+        return Str::slug(implode(' ', $parts));
+    }
 
     public function user()
     {
