@@ -17,6 +17,9 @@ class Property extends Model
         'title',
         'user_id',
         'category_id',
+        'offer_type',
+        'slug',
+        'offer_duration',
         'occupant_type',
         'location',
         'price',
@@ -31,8 +34,6 @@ class Property extends Model
         'published',
         'verified',
         'status',
-        'offer_type',
-        'offer_duration',
         'other_information',
         'charges',
     ];

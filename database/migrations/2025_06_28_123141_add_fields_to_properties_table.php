@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('properties', function (Blueprint $table) {
             $table->string('offer_type')->default('rent')->after('occupant_type');
+            $table->string('slug')->nullable();
             $table->string('offer_duration')->nullable()->after('offer_type');
         });
     }
@@ -26,6 +27,7 @@ return new class extends Migration
             //
             $table->dropColumn([
                 'offer_type',
+                'slug',
                 'offer_duration'
             ]);
         });
