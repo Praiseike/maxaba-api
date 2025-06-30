@@ -73,10 +73,13 @@ class PropertiesController extends ApiController
 
         Notification::send(Admin::all(), new NewPropertyNotification($property));
 
-        return $this->respondWithSuccess(
+        $response = $this->respondWithSuccess(
             message: 'Property created successfully',
             data: $property,
         );
+
+        \Log::info("Property Created Response", json_encode($response));
+        return $response;
     }
 
     public function getProperties(Request $request)
