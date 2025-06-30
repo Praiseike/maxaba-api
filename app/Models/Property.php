@@ -10,6 +10,9 @@ class Property extends Model
 {
     use HasFactory;
 
+    const OFFER_TYPE_RENT = 'rent';
+    const OFFER_TYPE_SALE = 'sale';
+
     protected $fillable = [
         'title',
         'user_id',
@@ -28,6 +31,8 @@ class Property extends Model
         'published',
         'verified',
         'status',
+        'offer_type',
+        'offer_duration',
         'other_information',
         'charges',
     ];
@@ -62,8 +67,6 @@ class Property extends Model
             return url("/storage/".$image);
         }, json_decode($value, true));
     }
-
-
 
 
     // relationships

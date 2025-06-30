@@ -51,7 +51,7 @@ class DashboardController extends ApiController
 
         $data = [
             "total_agents" => User::agents()->count(),
-            "pending_agents" => AgentApplication::where('status',Status::PENDING)->count(),
+            "pending_agents" => User::agent()->where('status',Status::PENDING)->count(),
             "total_houses" => Property::count(),
             "pending_houses" => Property::where('status',Status::PENDING)->count(),
             "recent_activities" => $grouped
