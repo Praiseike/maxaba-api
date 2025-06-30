@@ -59,7 +59,7 @@ class PropertiesController extends ApiController
             'occupant_type' => $validated['occupant_type'],
             'rejection_reason' => "",
             'category_id' => $validated['category_id'],
-            'location' => json_decode($validated['location']),
+            'location' => json_decode($validated['location']) ?? null,
             'price' => $validated['price'],
             'description' => $validated['description'],
             'bedrooms' => $validated['bedrooms'],
@@ -72,8 +72,8 @@ class PropertiesController extends ApiController
             'status' => 'pending',
             'published' => false,
             'verified' => false,
-            'other_information' => $validated['other_information'],
-            'charges' => $validated['charges'],
+            'other_information' => $validated['other_information'] ?? null,
+            'charges' => $validated['charges'] ?? null,
         ]);
 
         Notification::send(Admin::all(), new NewPropertyNotification($property));
