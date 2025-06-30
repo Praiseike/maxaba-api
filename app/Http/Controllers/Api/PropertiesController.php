@@ -78,7 +78,7 @@ class PropertiesController extends ApiController
             data: $property,
         );
 
-        \Log::info("Property Created Response", json_decode($response));
+        \Log::info( json_encode($response));
         return $response;
     }
 
