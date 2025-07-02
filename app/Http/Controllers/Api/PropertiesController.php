@@ -102,6 +102,7 @@ class PropertiesController extends ApiController
 
         if ($request->filled('search')) {
             $query->where('title', 'LIKE', "%{$request->search}%")
+                ->orWhere('slug', 'LIKE', "%{$request->search}%")
                 ->orWhere('description', 'LIKE', "%{$request->search}%")
                 ->orWhereJsonContains('amenities', $request->search);
         }
@@ -142,7 +143,7 @@ class PropertiesController extends ApiController
         return $this->respondWithSuccess("Property fetched successfully", $property);
     }
 
-    public function getPropertyBySlug(Request $request,string $slug)
+    public function getPropertyBySlug(Request $request, string $slug)
     {
         $property = Property::with('category')->where('slug', $slug)->first();
 
