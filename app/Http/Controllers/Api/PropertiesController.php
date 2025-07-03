@@ -66,7 +66,7 @@ class PropertiesController extends ApiController
             'bathrooms' => $validated['bathrooms'],
             'livingrooms' => $validated['livingrooms'],
             'offer_type' => $validated['offer_type'],
-            'offer_duration' => $validated['offer_duration'],
+            'offer_duration' => $validated['offer_duration'] ?? null,
             'amenities' => $validated['amenities'],
             'images' => $imagePaths,
             'status' => 'pending',
