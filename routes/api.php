@@ -4,6 +4,7 @@
 use App\Http\Controllers\Api\Agents\AgentsController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\CategoriesController;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\FollowController;
 use App\Http\Controllers\Api\PropertiesController;
 use App\Http\Controllers\Api\ServerController;
@@ -69,6 +70,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [CategoriesController::class, 'addCategory']);
         Route::put('/{id}', [CategoriesController::class, 'updateCategory']);
         Route::delete('/{id}', [CategoriesController::class, 'deleteCategory']);
+    });
+
+
+    Route::prefix('inbox')->group(function () {
+        Route::get('/conversations', [ChatController::class, 'getConversations']);
+        Route::get('/messages/{conversationId}', [ChatController::class, 'getMessages']);
+        Route::post('/send-message', [ChatController::class, 'sendMessage']);
     });
 
     // Follow/Unfollow
