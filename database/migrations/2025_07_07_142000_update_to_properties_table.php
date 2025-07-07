@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('properties', function (Blueprint $table) {
             $table->string('offer_status')->default('available'); // rented, sold, available
+            $table->softDeletes();
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('properties', function (Blueprint $table) {
             $table->dropColumn('offer_status');
+            $table->dropSoftDeletes();
         });
     }
 };
