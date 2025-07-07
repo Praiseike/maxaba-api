@@ -128,6 +128,7 @@ class PropertiesController extends ApiController
 
         $properties = $query->where('status', Status::APPROVED)
             ->with('category')
+            ->inRandomOrder()
             ->paginate();
         return $this->respondWithSuccess("Properties fetched successfully", $properties);
     }
