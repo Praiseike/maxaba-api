@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Storage;
 class PropertiesController extends ApiController
 {
     //
+    
+
+    public function updateProperty(Request $request){
+
+    }
 
     public function store(Request $request)
     {
@@ -90,6 +95,10 @@ class PropertiesController extends ApiController
     public function getProperties(Request $request)
     {
 
+        $request->validate([
+            'offer_type' => 'nullable|in:rent,sale',
+        ]);
+
         $query = Property::query();
 
         if ($request->filled('type')) {
@@ -112,7 +121,7 @@ class PropertiesController extends ApiController
         }
 
         if ($request->filled('offer_type')) {
-            $query->where('offer_type', '=', $request->offer_type);
+            $query->where('offer_type',  $request->offer_type);
         }
 
         $feats = ["bathrooms", "bedrooms", "livingrooms"];
