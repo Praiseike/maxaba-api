@@ -33,7 +33,7 @@ class PropertiesController extends ApiController
             'livingrooms' => 'required|integer|min:0',
             'amenities' => 'required|array|min:1',
             'amenities.*' => 'string|max:255',
-            'files' => 'required|array|min:1',
+            'files' => 'required|array|min:5',
             'files.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'offer_type' => 'required|in:rent,sale',
             'offer_duration' => 'nullable|string',
@@ -111,7 +111,12 @@ class PropertiesController extends ApiController
             $query->where('price', '<=', $request->max_price);
         }
 
+        if ($request->filled('offer_type')) {
+            $query->where('offer_type', '=', $request->offer_type);
+        }
+
         $feats = ["bathrooms", "bedrooms", "livingrooms"];
+
         foreach ($feats as $feat) {
             if ($request->filled($feat)) {
                 $query->where($feat, $request->{$feat});
@@ -129,6 +134,7 @@ class PropertiesController extends ApiController
         $properties = $query->where('status', Status::APPROVED)
             ->with('category')
             ->inRandomOrder()
+            ->available()
             ->paginate();
         return $this->respondWithSuccess("Properties fetched successfully", $properties);
     }
@@ -162,11 +168,11 @@ class PropertiesController extends ApiController
         if (!$property) {
             return $this->errorNotFound('Property not found');
         }
-
-        // Delete associated images
-        foreach ($property->images as $image) {
-            Storage::disk('public')->delete($image);
-        }
+        // properties are now soft deleted
+        // // Delete associated images
+        // foreach ($property->images as $image) {
+        //     Storage::disk('public')->delete($image);
+        // }
 
         $property->delete();
 
@@ -229,6 +235,31 @@ class PropertiesController extends ApiController
     {
         $favourites = auth()->user()->favourites()->paginate(10);
         return $this->respondWithSuccess("Fetched favourites", $favourites);
+    }
+
+
+    public function markAsSold(Property $property)
+    {
+        if ($property->offer_type != 'sale') {
+            return $this->errorBadRequest("This property is not for sale");
+        }
+
+        $property->offer_status = 'sold';
+        $property->save();
+
+        return $this->respondWithSuccess("Property marked as sold", $property);
+    }
+
+    public function marksAsRented(Property $property)
+    {
+        if ($property->offer_type != 'rent') {
+            return $this->errorBadRequest("This property is not for rent");
+        }
+
+        $property->offer_status = 'rented';
+        $property->save();
+
+        return $this->respondWithSuccess("Property marked as rented", $property);
     }
 
 

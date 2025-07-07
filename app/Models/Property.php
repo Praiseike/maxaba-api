@@ -5,13 +5,13 @@ namespace App\Models;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Str;
 
 
 class Property extends Model
 {
-    use HasFactory;
-
+    use HasFactory, SoftDeletes;
     const OFFER_TYPE_RENT = 'rent';
     const OFFER_TYPE_SALE = 'sale';
 
@@ -25,6 +25,7 @@ class Property extends Model
         'occupant_type',
         'location',
         'price',
+        'offer_status',
         'description',
         'images',
         'bedrooms',
@@ -71,6 +72,18 @@ class Property extends Model
             return url("/storage/" . $image);
         }, json_decode($value, true));
     }
+
+
+
+
+    // scopes
+
+    public function availableScope($query)
+    {
+        return $query->where('offer_status', 'available');
+    }
+
+
 
 
     // relationships

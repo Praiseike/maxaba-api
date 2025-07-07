@@ -61,6 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/favourites', [PropertiesController::class, 'myFavourites']);
         Route::post('/{property}/favourite', [PropertiesController::class, 'favourite']);
         Route::delete('/{property}/favourite', [PropertiesController::class, 'unfavourite']);
+        Route::post('{property}/mark-as-sold', [PropertiesController::class, 'markAsSold']);
+        Route::post('{property}/mark-as-rented', [PropertiesController::class, 'marksAsRented']);
         Route::patch('/{id}/status', [PropertiesController::class, 'updatePropertyStatus']);
         Route::delete('/{id}', [PropertiesController::class, 'deleteProperty']);
     });
