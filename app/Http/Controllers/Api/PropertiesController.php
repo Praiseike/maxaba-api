@@ -121,11 +121,11 @@ class PropertiesController extends ApiController
             $query->where(function ($q) use ($terms) {
                 foreach ($terms as $term) {
                     $q->where(function ($subQ) use ($term) {
-                        $subQ->where('title', 'ILIKE', "%{$term}%")
-                            ->orWhere('slug', 'ILIKE', "%{$term}%")
-                            ->orWhere('description', 'ILIKE', "%{$term}%")
+                        $subQ->where('title', 'like', "%{$term}%")
+                            ->orWhere('slug', 'like', "%{$term}%")
+                            ->orWhere('description', 'like', "%{$term}%")
                             ->orWhereJsonContains('amenities', $term)
-                            ->orWhere('location->city', 'ILIKE', "%{$term}%");
+                            ->orWhere('location->city', 'like', "%{$term}%");
                     });
                 }
             });
