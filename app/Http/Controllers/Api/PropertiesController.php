@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 class PropertiesController extends ApiController
 {
     //
-    
+
 
     public function store(Request $request)
     {
@@ -95,8 +95,9 @@ class PropertiesController extends ApiController
     }
 
 
-    public function updateProperty(Request $request){
-        
+    public function updateProperty(Request $request)
+    {
+
     }
     public function getProperties(Request $request)
     {
@@ -116,10 +117,18 @@ class PropertiesController extends ApiController
         }
 
         if ($request->filled('search')) {
-            $query->where('title', 'LIKE', "%{$request->search}%")
-                ->orWhere('slug', 'LIKE', "%{$request->search}%")
-                ->orWhere('description', 'LIKE', "%{$request->search}%")
-                ->orWhereJsonContains('amenities', $request->search);
+            $terms = explode(' ', $request->search);
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($subQ) use ($term) {
+                        $subQ->where('title', 'ILIKE', "%{$term}%")
+                            ->orWhere('slug', 'ILIKE', "%{$term}%")
+                            ->orWhere('description', 'ILIKE', "%{$term}%")
+                            ->orWhereJsonContains('amenities', $term)
+                            ->orWhere('location->city', 'ILIKE', "%{$term}%");
+                    });
+                }
+            });
         }
 
         if ($request->filled('max_price')) {
@@ -127,7 +136,7 @@ class PropertiesController extends ApiController
         }
 
         if ($request->filled('offer_type')) {
-            $query->where('offer_type',  $request->offer_type);
+            $query->where('offer_type', $request->offer_type);
         }
 
         $feats = ["bathrooms", "bedrooms", "livingrooms"];
