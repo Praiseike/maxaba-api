@@ -125,7 +125,10 @@ class PropertiesController extends ApiController
                             ->orWhere('slug', 'like', "%{$term}%")
                             ->orWhere('description', 'like', "%{$term}%")
                             ->orWhereJsonContains('amenities', $term)
-                            ->orWhereJsonContains('location', $term);
+                            ->orWhere('location->city', 'like', "%{$term}%")
+                            ->orWhere('location->state', 'like', "%{$term}%")
+                            ->orWhere('location->country', 'like', "%{$term}%")
+                            ->orWhere('location->address', 'like', "%{$term}%");
                     });
                 }
             });
