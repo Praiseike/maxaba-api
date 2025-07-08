@@ -16,10 +16,6 @@ class PropertiesController extends ApiController
     //
     
 
-    public function updateProperty(Request $request){
-
-    }
-
     public function store(Request $request)
     {
         $user = auth()->user();
@@ -38,7 +34,7 @@ class PropertiesController extends ApiController
             'livingrooms' => 'required|integer|min:0',
             'amenities' => 'required|array|min:1',
             'amenities.*' => 'string|max:255',
-            'files' => 'required|array|min:5',
+            'files' => 'required|array|min:1',
             'files.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'offer_type' => 'required|in:rent,sale',
             'offer_duration' => 'nullable|string',
@@ -92,6 +88,10 @@ class PropertiesController extends ApiController
         return $response;
     }
 
+
+    public function updateProperty(Request $request){
+        
+    }
     public function getProperties(Request $request)
     {
 
