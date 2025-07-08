@@ -117,20 +117,18 @@ class PropertiesController extends ApiController
         }
 
         if ($request->filled('search')) {
-            $terms = explode(' ', $request->search);
-            $query->where(function ($q) use ($terms) {
-                foreach ($terms as $term) {
-                    $q->where(function ($subQ) use ($term) {
-                        $subQ->where('title', 'like', "%{$term}%")
-                            ->orWhere('slug', 'like', "%{$term}%")
-                            ->orWhere('description', 'like', "%{$term}%")
-                            ->orWhereJsonContains('amenities', $term)
-                            ->orWhere('location->city', 'like', "%{$term}%")
-                            ->orWhere('location->state', 'like', "%{$term}%")
-                            ->orWhere('location->country', 'like', "%{$term}%")
-                            ->orWhere('location->address', 'like', "%{$term}%");
-                    });
-                }
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                    ->orWhere('slug', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%")
+                    ->orWhereJsonContains('amenities', $search)
+                    ->orWhere('offer_type', 'LIKE', "%{$search}%")
+                    ->orWhere('occupant_type', 'LIKE', "%{$search}%")
+                    ->orWhere('location->address', 'LIKE', "%{$search}%") // assuming location['address'] exists
+                    ->orWhere('location->state', 'LIKE', "%{$search}%")   // example: 'Lagos'
+                    ->orWhere('location->city', 'LIKE', "%{$search}%");
             });
         }
 
