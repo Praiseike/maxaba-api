@@ -154,7 +154,7 @@ class PropertiesController extends ApiController
         return $this->respondWithSuccess("Properties fetched successfully", $properties);
     }
 
-    public function getProperty(Request $request, int $id)
+    public function getProperty(Request $request, $id)
     {
         $property = Property::with('category')->find($id);
 
