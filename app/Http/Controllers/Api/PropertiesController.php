@@ -19,6 +19,12 @@ class PropertiesController extends ApiController
     public function store(Request $request)
     {
         $user = auth()->user();
+
+        \Log::info("received request to create property", [
+            'user_id' => $user->id,
+            'request_data' => $request->all(),
+        ]);
+
         if (!$user->isAgent() || $user->account_status != Status::ACTIVE) {
             return $this->errorForbidden("Must be an approved agent");
         }
