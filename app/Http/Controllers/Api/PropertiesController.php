@@ -117,19 +117,17 @@ class PropertiesController extends ApiController
         }
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = strtolower($request->search);
 
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'LIKE', "%{$search}%")
-                    ->orWhere('slug', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%")
-                    ->orWhereJsonContains('amenities', $search)
-                    ->orWhere('offer_type', 'LIKE', "%{$search}%")
-                    ->orWhere('occupant_type', 'LIKE', "%{$search}%")
-                    ->orWhere('location->address', 'LIKE', "%{$search}%") // assuming location['address'] exists
-                    ->orWhere('location->state', 'LIKE', "%{$search}%")   // example: 'Lagos'
-                    ->orWhere('location->city', 'LIKE', "%{$search}%");
-            });
+            $query->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"])
+                ->orWhereRaw('LOWER(slug) LIKE ?', ["%{$search}%"])
+                ->orWhereRaw('LOWER(description) LIKE ?', ["%{$search}%"])
+                ->orWhereRaw('LOWER(offer_type) LIKE ?', ["%{$search}%"])
+                ->orWhereRaw('LOWER(occupant_type) LIKE ?', ["%{$search}%"])
+                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(location, "$.address"))) LIKE ?', ["%{$search}%"])
+                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(location, "$.state"))) LIKE ?', ["%{$search}%"])
+                ->orWhereRaw('LOWER(JSON_UNQUOTE(JSON_EXTRACT(location, "$.city"))) LIKE ?', ["%{$search}%"]);
+
         }
 
         if ($request->filled('max_price')) {
