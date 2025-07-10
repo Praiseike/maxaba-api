@@ -18,6 +18,7 @@ class ProfileController extends ApiController
         }
         return $this->respondWithSuccess("User profile", [
             "id" => $user->id,
+            "uuid" => $user->uuid,
             "first_name" => $user->first_name,
             "last_name" => $user->last_name,
             "phone_number" => $user->phone_number,
