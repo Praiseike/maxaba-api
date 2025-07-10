@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\FollowController;
+use App\Http\Controllers\Api\NotificationsController;
 use App\Http\Controllers\Api\PropertiesController;
 use App\Http\Controllers\Api\ServerController;
 use App\Http\Controllers\Api\User\ProfileController;
@@ -74,7 +75,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [CategoriesController::class, 'deleteCategory']);
     });
 
-
+    Route::prefix('notifications')->group(function(){
+        Route::get('/',[NotificationsController::class, 'index']);
+        
+    });
     Route::prefix('inbox')->group(function () {
         Route::get('/conversations', [ChatController::class, 'getConversations']);
         Route::get('/messages/{conversationId}', [ChatController::class, 'getMessages']);

@@ -37,6 +37,7 @@ class PropertiesController extends ApiController
             'description' => 'required|string',
             'bedrooms' => 'required|integer|min:0',
             'bathrooms' => 'required|integer|min:0',
+            'kitchens' => 'required|integer|min:0',
             'livingrooms' => 'required|integer|min:0',
             'amenities' => 'required|array|min:1',
             'amenities.*' => 'string|max:255',
@@ -71,6 +72,7 @@ class PropertiesController extends ApiController
             'description' => $validated['description'],
             'bedrooms' => $validated['bedrooms'],
             'bathrooms' => $validated['bathrooms'],
+            'kitchens' => $validated['kitchens'],
             'livingrooms' => $validated['livingrooms'],
             'offer_type' => $validated['offer_type'],
             'offer_duration' => $validated['offer_duration'] ?? null,
@@ -138,7 +140,7 @@ class PropertiesController extends ApiController
             $query->where('offer_type', $request->offer_type);
         }
 
-        $feats = ["bathrooms", "bedrooms", "livingrooms"];
+        $feats = ["bathrooms", "bedrooms", "livingrooms","kitchens"];
 
         foreach ($feats as $feat) {
             if ($request->filled($feat)) {

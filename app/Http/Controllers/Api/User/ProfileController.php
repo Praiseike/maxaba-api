@@ -10,8 +10,12 @@ use Illuminate\Http\Request;
 class ProfileController extends ApiController
 {
 
-    public function getUser(Request $request, User $user)
+    public function getUser(Request $request, User $user = null)
     {
+        $user ??= $request->user();
+        if(!$user) {
+            return $this->respondWithError("User not found", 404);
+        }
         return $this->respondWithSuccess("User profile", [
             "id" => $user->id,
             "first_name" => $user->first_name,
@@ -19,6 +23,7 @@ class ProfileController extends ApiController
             "phone_number" => $user->phone_number,
             "profile_image_url" => $user->profile_image_url,
             "listings" => $user->properties->count(),
+            "ethnicity" => $user->ethnicity,
             'account_type' => $user->account_type,
             'followers' => $user->followers()->count(),
             'following' => $user->following()->count(),
@@ -32,21 +37,7 @@ class ProfileController extends ApiController
     public function index(Request $request)
     {
         $user = $request->user();
-        return $this->respondWithSuccess("User profile", [
-            "id" => $user->id,
-            "first_name" => $user->first_name,
-            "last_name" => $user->last_name,
-            "phone_number" => $user->phone_number,
-            "profile_image_url" => $user->profile_image_url,
-            "listings" => $user->properties->count(),
-            'account_type' => $user->account_type,
-            'followers' => $user->followers()->count(),
-            'following' => $user->following()->count(),
-            'is_following' => $request->user()?->isFollowing($user) ?? false,
-            'bio' => $user->bio,
-            'properties' => $user->properties()->with('category')->get(),
-            'location' => $user->location,
-        ]);
+        return $this->getUser($request, $user);
     }
 
     public function save(Request $request)
@@ -54,6 +45,7 @@ class ProfileController extends ApiController
         $request->validate([
             "first_name" => "required|string",
             "last_name" => "required|string",
+            "ethnicity" => "nullable|string",
             "phone_number" => "required|string",
             "password" => "required|string",
             "password_confirmation" => "required|string|same:password",
@@ -61,7 +53,7 @@ class ProfileController extends ApiController
 
 
         $user = $request->user();
-        $user->update($request->only("first_name", "last_name", "phone_number", "password"));
+        $user->update($request->only("first_name", "ethnicity" , "last_name", "phone_number", "password"));
         $user->save();
 
         return $this->respondWithSuccess("Updated profile", $user);
@@ -96,6 +88,7 @@ class ProfileController extends ApiController
             //     "last_name" => "sometimes|nullable|string|max:255",  
             "phone_number" => "sometimes|nullable|string|max:15",
             "address" => "sometimes|nullable|string|max:255",
+            "ethnicity" => "sometimes|nullable|string|max:255",
             "location" => "sometimes|nullable|string|max:255",
             "bio" => "sometimes|nullable|string|max:500",
             "password" => "sometimes|nullable|string|min:8|confirmed",
@@ -104,6 +97,7 @@ class ProfileController extends ApiController
         $user->update($request->only([
             // "first_name",
             // "last_name",
+            "ethnicity",
             "phone_number",
             "address",
             "location",
@@ -120,6 +114,7 @@ class ProfileController extends ApiController
         return $this->respondWithSuccess("Profile updated successfully", [
             "first_name" => $user->first_name,
             "last_name" => $user->last_name,
+            "ethnicity" => $user->ethnicity,
             "phone_number" => $user->phone_number,
             "address" => $user->address,
             "location" => $user->location,

@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'profile_image',
+        'ethnicity',
         'address',
         'location',
         'phone_number',
@@ -38,6 +39,39 @@ class User extends Authenticatable
     ];
 
     protected $appends = ['profile_image_url', 'name', 'has_profile'];
+
+
+    protected static function boot()
+    {
+        parent::boot();
+    
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = \Str::uuid();
+            }
+        });
+    }
+
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function getProfileImageUrlAttribute()
     {
         return $this->profile_image ? url("/storage/" . $this->profile_image) : null;

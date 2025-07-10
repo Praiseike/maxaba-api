@@ -29,6 +29,7 @@ class Property extends Model
         'description',
         'images',
         'bedrooms',
+        'kitchens',
         'admin_id',
         'bathrooms',
         'rejection_reason',
@@ -107,6 +108,7 @@ class Property extends Model
             "{$this->bedrooms}-bed",
             "{$this->bathrooms}-bath",
             "{$this->livingrooms}-living",
+            "{$this->kitchens}-kitchen",
         ];
 
         // Include up to 3 amenities for brevity

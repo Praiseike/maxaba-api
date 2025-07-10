@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ApiController;
 use App\Models\Admin;
 use App\Models\Property;
 use App\Notifications\NewPropertyNotification;
+use App\Notifications\PropertyStatusUpdateNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Notification;
@@ -35,14 +36,14 @@ class PropertiesController extends ApiController
             'offer_type' => 'required|in:rent,sale',
             'offer_duration' => 'nullable|string',
             'other_information' => 'nullable|array',
-        
+
             // Make charges required as an array if offer_type is rent
             'charges' => 'required_if:offer_type,rent|array',
             'charges.agent_percentage' => 'required_if:offer_type,rent|numeric|min:0',
             'charges.caution_percentage' => 'required_if:offer_type,rent|numeric|min:0',
             'charges.legal_percentage' => 'required_if:offer_type,rent|numeric|min:0',
         ]);
-        
+
         $imagePaths = [];
 
         foreach ($request->file('files') as $image) {
@@ -177,6 +178,8 @@ class PropertiesController extends ApiController
         }
 
         $property->save();
+
+        $property->user->notify(new PropertyStatusUpdateNotification($property, $request->status == Status::REJECTED ? $request->reason : "You property has been ". strtolower($property->status). " by our admins"));
 
         return $this->respondWithSuccess("Property status updated successfully", $property);
     }
