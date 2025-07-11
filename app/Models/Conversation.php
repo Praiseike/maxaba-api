@@ -20,6 +20,8 @@ class Conversation extends Model
 
     protected $appends = ['last_message'];
 
+    protected $with = [ 'user:first_name,last_name,id,uuid', 'recipient:first_name,last_name,id,uuid'];
+
     public function getLastMessageAttribute(){
         return $this->messages()->latest()->first();
     }
