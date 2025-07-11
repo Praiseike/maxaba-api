@@ -84,12 +84,21 @@ class ChatController extends ApiController
 
     public function getConversations(Request $request)
     {
-        $conversations = Conversation::where('user_id', auth()->id())
-            ->orWhere('recipient_id', auth()->id())
+        $userId = auth()->id();
+
+        $conversations = Conversation::where('user_id', $userId)
+            ->orWhere('recipient_id', $userId)
             ->orderBy('updated_at', 'desc')
             ->get();
 
-        return $this->respondWithSuccess("Fetched conversations", $conversations);
+        // Use a unique key strategy to filter duplicates
+        $uniqueConversations = $conversations->unique(function ($conversation) {
+            $ids = [$conversation->user_id, $conversation->recipient_id];
+            sort($ids);
+            return implode('-', $ids); 
+        });
+
+        return $this->respondWithSuccess("Fetched conversations", $uniqueConversations->values());
     }
 
     public function createAsset(Request $request, $messageId)
