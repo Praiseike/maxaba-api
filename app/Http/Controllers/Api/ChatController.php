@@ -54,6 +54,7 @@ class ChatController extends ApiController
         $message->conversation_id = $conversation->id;
         $message->user_id = auth()->id();
         $message->content = $request->input('content');
+        $message->property_id = $request->property_id;
         $message->type = $request->input('type');
         $message->save();
 
@@ -91,7 +92,7 @@ class ChatController extends ApiController
             ->with([
                 'user:id,first_name,last_name,email,profile_image',
                 'recipient:id,first_name,last_name,email,profile_image',
-                'property:id,title,address',
+                'property:id,title,location',
             ])
 
             ->withCount(['messages as unread_count' => function ($query) use ($userId) {
