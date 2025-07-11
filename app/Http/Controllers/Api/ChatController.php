@@ -55,6 +55,7 @@ class ChatController extends ApiController
         $message->user_id = auth()->id();
         $message->content = $request->input('content');
         $message->property_id = $request->property_id;
+        
         $message->type = $request->input('type');
         $message->save();
 
