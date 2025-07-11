@@ -44,11 +44,10 @@ class ChatController extends ApiController
 
 
         $conversation = Conversation::firstOrCreate([
-            'user_id' => auth()->id(),
-            'recipient_id' => $request->recipient_id,
+            'user_id' => min(auth()->id(), $request->recipient_id),
+            'recipient_id' => max(auth()->id(), $request->recipient_id),
             'property_id' => $request->property_id,
         ]);
-
 
 
         $message = new Message();
@@ -81,24 +80,42 @@ class ChatController extends ApiController
 
         return $this->respondWithSuccess("Sent message", $message, 201);
     }
-
     public function getConversations(Request $request)
     {
         $userId = auth()->id();
-
-        $conversations = Conversation::where('user_id', $userId)
-            ->orWhere('recipient_id', $userId)
-            ->orderBy('updated_at', 'desc')
-            ->get();
-
-        // Use a unique key strategy to filter duplicates
-        $uniqueConversations = $conversations->unique(function ($conversation) {
-            $ids = [$conversation->user_id, $conversation->recipient_id];
-            sort($ids);
-            return implode('-', $ids); 
-        });
-
-        return $this->respondWithSuccess("Fetched conversations", $uniqueConversations->values());
+    
+        $conversations = Conversation::where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                      ->orWhere('recipient_id', $userId);
+            })
+            ->with([
+                'user:id,first_name,last_name,email',
+                'recipient:id,first_name,last_name,email',
+                'property:id,title,address'
+            ])
+            
+            ->withCount(['messages as unread_count' => function ($query) use ($userId) {
+                $query->where('user_id', '!=', $userId)
+                      ->where('read_at', null);
+            }])
+            ->orderBy('last_message_at', 'desc')
+            ->get()
+            ->map(function ($conversation) use ($userId) {
+                $otherUser = $conversation->user_id === $userId 
+                    ? $conversation->recipient 
+                    : $conversation->user;
+                
+                return [
+                    'id' => $conversation->id,
+                    'other_user' => $otherUser,
+                    'property' => $conversation->property,
+                    'unread_count' => $conversation->unread_count,
+                    'last_message_at' => $conversation->last_message_at,
+                    'created_at' => $conversation->created_at,
+                ];
+            });
+    
+        return $this->respondWithSuccess("Fetched conversations", $conversations);
     }
 
     public function createAsset(Request $request, $messageId)
