@@ -89,11 +89,11 @@ class ChatController extends ApiController
                       ->orWhere('recipient_id', $userId);
             })
             ->with([
-                'user:id,first_name,last_name,email',
-                'recipient:id,first_name,last_name,email',
+                'user:id,first_name,last_name,email,profile_image',
+                'recipient:id,first_name,last_name,email,profile_image',
                 'property:id,title,address'
             ])
-            
+
             ->withCount(['messages as unread_count' => function ($query) use ($userId) {
                 $query->where('user_id', '!=', $userId)
                       ->where('read_at', null);
