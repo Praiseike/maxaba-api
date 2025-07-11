@@ -91,7 +91,7 @@ class ChatController extends ApiController
             ->with([
                 'user:id,first_name,last_name,email,profile_image',
                 'recipient:id,first_name,last_name,email,profile_image',
-                'property:id,title,address'
+                'property:id,title,address',
             ])
 
             ->withCount(['messages as unread_count' => function ($query) use ($userId) {
@@ -111,6 +111,7 @@ class ChatController extends ApiController
                     'property' => $conversation->property,
                     'unread_count' => $conversation->unread_count,
                     'last_message_at' => $conversation->last_message_at,
+                    'last_message' => $conversation->last_message ,
                     'created_at' => $conversation->created_at,
                 ];
             });
