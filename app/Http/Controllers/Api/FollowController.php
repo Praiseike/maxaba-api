@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\NewFollowerNotification;
 use Illuminate\Http\Request;
 
 use App\Models\User;
@@ -11,6 +12,7 @@ class FollowController extends ApiController
     public function follow(User $user, Request $request)
     {
         $request->user()->follow($user);
+        $user->notify(new NewFollowerNotification($request->user()));
         return $this->respondWithSuccess( 'Followed successfully.');
     }
 
