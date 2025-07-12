@@ -81,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::prefix('inbox')->group(function () {
         Route::get('/conversations', [ChatController::class, 'getConversations']);
+        Route::post('/conversations', [ChatController::class, 'createConversation']);
         Route::get('/messages/{conversationId}', [ChatController::class, 'getMessages']);
         Route::post('/send-message', [ChatController::class, 'sendMessage']);
     });

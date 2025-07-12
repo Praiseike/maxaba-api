@@ -9,6 +9,40 @@ use Illuminate\Http\Request;
 
 class ChatController extends ApiController
 {
+
+
+    private function getConversation($user_id, $recipient_id, $property_id = null){
+        return Conversation::firstOrCreate([
+            'user_id' => min($user_id, $recipient_id),
+            'recipient_id' => max($user_id, $recipient_id),
+            'property_id' => $property_id,
+        ]);
+    }
+    
+
+    public function createConversation(Request $request)
+    {
+        $request->validate([
+            'recipient_id' => 'required|exists:users,id',
+            'property_id' => 'nullable|exists:properties,id',
+        ]);
+
+        $user = auth()->user();
+
+        if ($user->id === $request->recipient_id) {
+            return $this->respondWithError("You cannot create a conversation with yourself", 400);
+        }
+
+        $conversation = $this->getConversation($user->id, $request->recipient_id, $request->property_id);
+        $conversation->load(([
+            'user:id,first_name,last_name,email,profile_image',
+            'recipient:id,first_name,last_name,email,profile_image',
+            'property:id,title,location',
+        ]));
+        
+        return $this->respondWithSuccess("Conversation created", $conversation, 201);
+    }
+
     public function getMessages(Request $request, $conversationId)
     {
         $messages = Message::where('conversation_id', $conversationId)
@@ -45,12 +79,7 @@ class ChatController extends ApiController
         }
 
 
-        $conversation = Conversation::firstOrCreate([
-            'user_id' => min(auth()->id(), $request->recipient_id),
-            'recipient_id' => max(auth()->id(), $request->recipient_id),
-            'property_id' => $request->property_id,
-        ]);
-
+        $conversation = $this->getConversation($user->id, $request->recipient_id);
 
         $message = new Message();
         $message->conversation_id = $conversation->id;
