@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class RoommateController extends ApiController
 {
     public function index(){
-        $requests = RoommateRequest::paginate(10);
+        $requests = RoommateRequest::with('user')->paginate(10);
         return $this->respondWithSuccess("Fetched roommates",$requests);
     }
 
@@ -26,9 +26,8 @@ class RoommateController extends ApiController
             "interests.*" => "string",
         ]);
         $validated['user_id'] = auth()->user()->id;
-        $roommateRequest = RoommateRequest::create(
-            $validated
-        );
+
+        $roommateRequest = RoommateRequest::create($validated);
 
         return $this->respondWithSuccess("Roommate request created successfully", $roommateRequest);
     }
