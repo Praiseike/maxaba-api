@@ -28,6 +28,7 @@ class PropertiesController extends ApiController
             'description' => 'required|string',
             'bedrooms' => 'required|integer|min:0',
             'bathrooms' => 'required|integer|min:0',
+            'kitchens' => 'required|integer|min:0',
             'livingrooms' => 'required|integer|min:0',
             'amenities' => 'required|array|min:1',
             'amenities.*' => 'string|max:255',
@@ -57,21 +58,23 @@ class PropertiesController extends ApiController
             'rejection_reason' => "",
             'admin_id' => $user->id,
             'category_id' => $validated['category_id'],
-            'location' => json_decode($validated['location']),
+            'location' => json_decode($validated['location']) ?? null,
             'price' => $validated['price'],
             'description' => $validated['description'],
             'bedrooms' => $validated['bedrooms'],
             'bathrooms' => $validated['bathrooms'],
+            'kitchens' => $validated['kitchens'],
             'livingrooms' => $validated['livingrooms'],
             'offer_type' => $validated['offer_type'],
-            'offer_duration' => $validated['offer_duration'],
+            'offer_duration' => $validated['offer_duration'] ?? null,
             'amenities' => $validated['amenities'],
             'images' => $imagePaths,
             'status' => 'pending',
             'published' => false,
             'verified' => false,
-            'other_information' => $validated['other_information'],
-            'charges' => $validated['charges'],
+            'other_information' => $validated['other_information'] ?? null,
+            'charges' => $validated['charges'] ?? null,
+
         ]);
 
 
@@ -179,7 +182,7 @@ class PropertiesController extends ApiController
 
         $property->save();
 
-        $property->user->notify(new PropertyStatusUpdateNotification($property, $request->status == Status::REJECTED ? $request->reason : "You property has been ". strtolower($property->status). " by our admins"));
+        $property->user->notify(new PropertyStatusUpdateNotification($property, $request->status == Status::REJECTED ? $request->reason : "You property has been ". strtolower($property->status->value). " by our admins"));
 
         return $this->respondWithSuccess("Property status updated successfully", $property);
     }
