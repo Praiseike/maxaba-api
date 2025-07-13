@@ -43,7 +43,7 @@ class ChatController extends ApiController
         return $this->respondWithSuccess("Conversation created", $conversation, 201);
     }
 
-    public function getMessages(Request $request, $conversationId)
+    public function getMessages($conversationId)
     {
         $messages = Message::where('conversation_id', $conversationId)
             ->with(['user:first_name,last_name,id', 'property', 'assets'])

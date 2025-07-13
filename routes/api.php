@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Http\Controllers\Api\Agents\AgentsController;
@@ -66,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('{property}/mark-as-rented', [PropertiesController::class, 'marksAsRented']);
         Route::patch('/{id}/status', [PropertiesController::class, 'updatePropertyStatus']);
         Route::delete('/{id}', [PropertiesController::class, 'deleteProperty']);
+        Route::put('/{id}', [PropertiesController::class, 'updateProperty']);
     });
 
     // Categories

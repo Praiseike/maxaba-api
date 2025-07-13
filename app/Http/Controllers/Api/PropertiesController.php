@@ -97,10 +97,61 @@ class PropertiesController extends ApiController
     }
 
 
-    public function updateProperty(Request $request)
+    public function updateProperty(Request $request, $id)
     {
+        $property = Property::find($id);
 
+        if (!$property) {
+            return $this->errorNotFound('Property not found');
+        }
+
+        $validated = $request->validate([
+            'title' => 'sometimes|string',
+            'price' => 'sometimes|numeric|min:0',
+            'description' => 'sometimes|string',
+            'bedrooms' => 'sometimes|integer|min:0',
+            'bathrooms' => 'sometimes|integer|min:0',
+            'kitchens' => 'sometimes|integer|min:0',
+            'livingrooms' => 'sometimes|integer|min:0',
+            'amenities' => 'sometimes|array',
+            'amenities.*' => 'string|max:255',
+            'location' => 'sometimes|string',
+            'files' => 'sometimes|array',
+            'files.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'delete_images' => 'sometimes|array',
+            'delete_images.*' => 'string',
+        ]);
+
+        // Handle image deletions
+        if ($request->filled('delete_images')) {
+            foreach ($request->delete_images as $image) {
+                if (in_array($image, $property->images)) {
+                    Storage::disk('public')->delete($image);
+                    $property->images = array_values(array_diff($property->images, [$image]));
+                }
+            }
+        }
+
+        // Handle new image uploads
+        if ($request->hasFile('files')) {
+            $newImagePaths = [];
+            foreach ($request->file('files') as $image) {
+                $path = $image->store('properties', 'public');
+                $newImagePaths[] = $path;
+            }
+            $property->images = array_merge($property->images, $newImagePaths);
+        }
+
+        // Update other property fields
+        $property->fill($validated);
+        if (isset($validated['location'])) {
+            $property->location = json_decode($validated['location'], true);
+        }
+        $property->save();
+
+        return $this->respondWithSuccess("Property updated successfully", $property);
     }
+
     public function getProperties(Request $request)
     {
 
