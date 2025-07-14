@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Admin\AgentsController;
 use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\PropertiesController;
+use App\Http\Controllers\Api\CategoriesController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('auth/verify', [AuthController::class, 'verifyCode']);
@@ -36,6 +37,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [PropertiesController::class, 'getProperty']);
         Route::delete('/{id}', [PropertiesController::class, 'deleteProperty']);
     });
+
+
+    Route::prefix('amenities')->group(function () {
+        Route::post('/', [CategoriesController::class, 'createAmenity']);
+        Route::get('/', [CategoriesController::class, 'getAmenities']);
+    });
+
 
     Route::post('/app-logo', [DashboardController::class, 'uploadAppLogo']);
     Route::post('/app-favicon', [DashboardController::class, 'uploadAppFavicon']);

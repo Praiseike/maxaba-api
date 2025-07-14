@@ -3,12 +3,33 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Amenity;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CategoriesController extends ApiController
 {
+
+    public function createAmenity(Request $request){
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'image' => ['nullable', 'string'], 
+        ]);
+
+        $amenity = Amenity::create([
+            'name' => $request->name,
+            'image' => $request->image,
+        ]);
+
+        return $this->respondWithSuccess("Amenity created successfully", $amenity);
+    }
+
+    public function getAmenities()
+    {
+        return $this->respondWithSuccess("Fetched amenities", Amenity::all());
+    }
+
     public function getCategories()
     {
         return $this->respondWithSuccess("Fetched categories", Category::all());
