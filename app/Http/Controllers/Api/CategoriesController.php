@@ -39,19 +39,12 @@ class CategoriesController extends ApiController
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'image' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Validate image file
+            'image' => ['nullable', 'string'],
         ]);
-
-        $imagePath = null;
-
-        if ($request->hasFile('image')) {
-            // Store the image and get its relative path
-            $imagePath = $request->file('image')->store('categories', 'public');
-        }
 
         $category = Category::create([
             'name' => $request->name,
-            'image' => $imagePath,
+            'image' => $request->image,
         ]);
 
         return $this->respondWithSuccess("Category added successfully", $category);
