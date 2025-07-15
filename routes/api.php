@@ -19,6 +19,8 @@ Route::post('/auth/verify', [AuthController::class, 'verifyToken']);
 
 // Public property-related routes
 Route::prefix('open')->group(function(){
+    Route::get('roommates', [RoommateController::class, 'index']);
+
     Route::prefix('properties')->group(function () {
         Route::get('/search', [PropertiesController::class, 'searchProperties']);        
         Route::get('/', [PropertiesController::class, 'getProperties']);
@@ -51,7 +53,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Roommates
     Route::prefix('roommates')->group(function () {
-        Route::get('/', [RoommateController::class, 'index']);
         Route::post('/', [RoommateController::class, 'store']);
     });
 
