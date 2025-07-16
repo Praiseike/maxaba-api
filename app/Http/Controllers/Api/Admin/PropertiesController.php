@@ -133,7 +133,7 @@ class PropertiesController extends ApiController
             });
         }
 
-        if ($request->filled('amenities')) {
+        if($request->filled('amenities')) {
             foreach (explode(',', $request->amenities) as $amenity) {
                 $query->whereJsonContains('amenities', trim($amenity));
             }

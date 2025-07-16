@@ -206,10 +206,13 @@ class PropertiesController extends ApiController
                 $query->whereJsonContains('amenities', $amenity);
             }
         }
+        
+        if($request->filled('randomize')){
+            $query->inRandomOrder();
+        }
 
         $properties = $query->where('status', Status::APPROVED)
             ->with('category')
-            ->inRandomOrder()
             ->available()
             ->paginate();
         return $this->respondWithSuccess("Properties fetched successfully", $properties);
