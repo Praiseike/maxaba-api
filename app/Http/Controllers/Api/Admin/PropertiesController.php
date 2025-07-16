@@ -139,7 +139,7 @@ class PropertiesController extends ApiController
             }
         }
 
-        $properties = $query->with('category')->paginate();
+        $properties = $query->with('category')->latest()->paginate();
 
         return $this->respondWithSuccess("Properties fetched successfully", $properties);
     }
