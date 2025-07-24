@@ -19,6 +19,17 @@ class NotificationsController extends ApiController
             'created_at'
         ]);
 
+        $notifications->map(function ($notification) {
+            $notification->markAsRead();
+        });
         return $this->respondWithSuccess('Notifications retrieved successfully', $notifications);
+    }
+
+    public function getNotificationStats(){
+        $user = auth()->user();
+
+        return $this->respondWithSuccess("Fetched notification stats", [
+            'unread_count' => $user->notifications()->whereNull('read_at')->count(),
+        ]);
     }
 }

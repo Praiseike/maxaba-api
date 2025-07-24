@@ -78,7 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('notifications')->group(function(){
         Route::get('/',[NotificationsController::class, 'index']);
-        
+        Route::get('/stats',[NotificationsController::class, 'getNotificationStats']);
     });
     Route::prefix('inbox')->group(function () {
         Route::get('/conversations', [ChatController::class, 'getConversations']);
