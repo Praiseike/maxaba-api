@@ -122,8 +122,8 @@ class ChatController extends ApiController
                       ->orWhere('recipient_id', $userId);
             })
             ->with([
-                'user:id,first_name,last_name,email,profile_image',
-                'recipient:id,first_name,last_name,email,profile_image',
+                'user:id,first_name,last_name,uuid,email,profile_image',
+                'recipient:id,first_name,last_name,uuid,email,profile_image',
                 'property:id,title,location',
             ])
 
