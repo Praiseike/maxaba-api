@@ -69,7 +69,7 @@ class Property extends Model
 
     public function getIsFavouriteAttribute()
     {
-        return  false;
+        return $this->isFavourite(auth()->user()) || false;
     }
     public function getImagesAttribute($value)
     {
@@ -77,6 +77,7 @@ class Property extends Model
             return url("/storage/" . $image);
         }, json_decode($value, true));
     }
+
 
 
 
