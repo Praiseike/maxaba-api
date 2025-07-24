@@ -12,7 +12,7 @@ class RoommateRequest extends Model
     protected $fillable = [
         'user_id','category_id',
         'min_price','max_price','interests','location',
-        'gender',
+        'gender'
     ];
 
     protected $casts = [
