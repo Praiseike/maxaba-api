@@ -54,7 +54,8 @@ class Property extends Model
     ];
 
     protected $appends = [
-        'user_image'
+        'user_image',
+        'is_favourite',
     ];
 
 
@@ -66,7 +67,10 @@ class Property extends Model
         return $this->user?->profile_image_url;
     }
 
-
+    public function getIsFavouriteAttribute()
+    {
+        return  false;
+    }
     public function getImagesAttribute($value)
     {
         return array_map(function ($image) {
@@ -76,16 +80,12 @@ class Property extends Model
 
 
 
-
     // scopes
 
     public function scopeAvailable($query)
     {
         return $query->where('offer_status', 'available');
     }
-
-
-
 
     // relationships
 
@@ -147,10 +147,13 @@ class Property extends Model
         return $this->belongsToMany(User::class, 'favourites')->withTimestamps();
     }
 
+    public function isFavourite($user): bool
+    {
+        return $this->favouritedBy()->where('user_id', $user?->id)->exists();
+    }
 
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
-
 }
