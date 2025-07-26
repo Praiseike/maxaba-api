@@ -44,7 +44,7 @@ class User extends Authenticatable
     protected static function boot()
     {
         parent::boot();
-    
+
         static::creating(function ($model) {
             if (empty($model->uuid)) {
                 $model->uuid = \Str::uuid();
@@ -147,11 +147,15 @@ class User extends Authenticatable
         $this->following()->detach($user->id);
     }
 
+    // public function isFollowing(User $user)
+    // {
+    //     return $this->following()->where('user_id', $user->id)->exists();
+    // }
+
     public function isFollowing(User $user)
     {
-        return $this->following()->where('user_id', $user->id)->exists();
+        return $this->following->contains($user);
     }
-
     public function roommateRequests()
     {
         return $this->hasOne(RoommateRequest::class);
