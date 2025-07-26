@@ -5,17 +5,20 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserFollower;
 use Illuminate\Http\Request;
 
 class ProfileController extends ApiController
 {
 
-    public function getUser(Request $request, User $user = null)
+    public function getLoggedInUser(Request $request)
     {
-        $user ??= $request->user();
+        $user = $request->user();
+
         if(!$user) {
-            return $this->respondWithError("User not found", 404);
+            return $this->respondWithError("User not Logged in", 404);
         }
+
         return $this->respondWithSuccess("User profile", [
             "id" => $user->id,
             "uuid" => $user->uuid,
@@ -35,10 +38,38 @@ class ProfileController extends ApiController
         ]);
 
     }
+
+    public function getUser(Request $request, User $user)
+    {
+
+        $response =  [
+            "id" => $user->id,
+            "uuid" => $user->uuid,
+            "first_name" => $user->first_name,
+            "last_name" => $user->last_name,
+            "phone_number" => $user->phone_number,
+            "profile_image_url" => $user->profile_image_url,
+            "listings" => $user->properties->count(),
+            "ethnicity" => $user->ethnicity,
+            'account_type' => $user->account_type,
+            'followers' => $user->followers()->count(),
+            'following' => $user->following()->count(),
+            'bio' => $user->bio,
+            'properties' => $user->properties()->with('category')->get(),
+            'location' => $user->location,
+        ];
+
+        
+        $response['is_following'] = UserFollower::where('user_id', $user->id)
+            ->where('follower_id', auth()->id())
+            ->exists();
+
+        return $this->respondWithSuccess("User profile", $response);
+    }
+
     public function index(Request $request)
     {
-        $user = $request->user();
-        return $this->getUser($request, $user);
+        return $this->getLoggedInUser($request);
     }
 
     public function save(Request $request)

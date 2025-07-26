@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Status;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -137,9 +138,13 @@ class User extends Authenticatable
 
     public function follow(User $user)
     {
-        if ($this->id !== $user->id && !$this->isFollowing($user)) {
-            $this->following()->attach($user->id);
+        if ($this->id !== $user->id ) {
+            return $this->following()->attach($user->id);
         }
+        throw ClientException::create(
+            'You cannot follow yourself or already following this user.',
+            400
+        );
     }
 
     public function unfollow(User $user)
@@ -147,15 +152,7 @@ class User extends Authenticatable
         $this->following()->detach($user->id);
     }
 
-    // public function isFollowing(User $user)
-    // {
-    //     return $this->following()->where('user_id', $user->id)->exists();
-    // }
 
-    public function isFollowing(User $user)
-    {
-        return $this->following->contains($user);
-    }
     public function roommateRequests()
     {
         return $this->hasOne(RoommateRequest::class);
