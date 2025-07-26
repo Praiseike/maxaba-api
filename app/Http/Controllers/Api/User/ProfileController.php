@@ -28,7 +28,7 @@ class ProfileController extends ApiController
             'account_type' => $user->account_type,
             'followers' => $user->followers()->count(),
             'following' => $user->following()->count(),
-            'is_following' => (bool)$user->isFollowing($request->user()), //(bool) $request->user()?->isFollowing($user) ,
+            'is_following' => (bool) $request->user()?->isFollowing($user) ,
             'bio' => $user->bio,
             'properties' => $user->properties()->with('category')->get(),
             'location' => $user->location,
