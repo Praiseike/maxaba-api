@@ -79,10 +79,6 @@ class Property extends Model
     }
 
 
-
-
-    // scopes
-
     public function scopeAvailable($query)
     {
         return $query->where('offer_status', 'available');

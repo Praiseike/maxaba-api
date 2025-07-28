@@ -41,6 +41,7 @@ Route::get('/categories', [CategoriesController::class, 'getCategories']);
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
 
+
     // User Profile
     Route::prefix('user')->group(function () {
         Route::get('/profile', [ProfileController::class, 'index']);
@@ -60,6 +61,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Authenticated property actions
     Route::prefix('properties')->group(function () {
+        Route::get('/', [PropertiesController::class, 'getProperties']);
+        Route::get('/i/{slug}', [PropertiesController::class, 'getPropertyBySlug']);
+        
         Route::post('/', [PropertiesController::class, 'store']);
         Route::get('/favourites', [PropertiesController::class, 'myFavourites']);
         Route::post('/{property}/favourite', [PropertiesController::class, 'favourite']);
@@ -69,6 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/{id}/status', [PropertiesController::class, 'updatePropertyStatus']);
         Route::delete('/{id}', [PropertiesController::class, 'deleteProperty']);
         Route::put('/{id}', [PropertiesController::class, 'updateProperty']);
+        Route::get('/{id}', [PropertiesController::class, 'getProperty']);
     });
 
     // Categories
