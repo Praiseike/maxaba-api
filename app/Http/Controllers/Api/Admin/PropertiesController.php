@@ -161,6 +161,8 @@ class PropertiesController extends ApiController
         return $this->respondWithSuccess("Property deleted successfully");
     }
 
+    
+
     public function updatePropertyStatus(Request $request, $id)
     {
         $request->validate([

@@ -136,6 +136,10 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'user_followers', 'user_id', 'follower_id')->withTimestamps();
     }
 
+    public function isFollowing(User $user)
+    {
+        return $this->following()->where('follower_id', $user->id)->exists();
+    }
     public function follow(User $user)
     {
         if ($this->id !== $user->id ) {
