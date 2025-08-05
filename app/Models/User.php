@@ -51,15 +51,26 @@ class User extends Authenticatable
                 $model->uuid = \Str::uuid();
             }
         });
+
     }
 
 
-    public function getRouteKeyName()
+    // public function getRouteKeyName()
+    // {
+    //     return 'uuid';
+    // }
+
+    public function resolveRouteBinding($value, $field = null)
     {
-        return 'uuid';
+
+        $user = $this->where('uuid', $value)->first();
+        if (! $user) {
+            $user = $this->where('id', $value)->first();
+        }
+    
+        return $user;
     }
-
-
+    
 
 
     public function getProfileImageUrlAttribute()
