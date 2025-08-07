@@ -98,3 +98,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/follow/{user}', [FollowController::class, 'follow']);
     Route::delete('/unfollow/{user}', [FollowController::class, 'unfollow']);
 });
+
+
+// New Google auth routes
+Route::post('/auth/google/verify', [AuthController::class, 'verifyGoogleToken']);
+Route::post('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']); // Optional
