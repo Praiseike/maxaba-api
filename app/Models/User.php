@@ -75,6 +75,9 @@ class User extends Authenticatable
 
     public function getProfileImageUrlAttribute()
     {
+        if(str_contains($this->profile_image, 'http')) {
+            return $this->profile_image;
+        }
         return $this->profile_image ? url("/storage/" . $this->profile_image) : null;
     }
 
