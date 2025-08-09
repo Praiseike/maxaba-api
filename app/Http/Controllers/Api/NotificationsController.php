@@ -17,11 +17,12 @@ class NotificationsController extends ApiController
             'data',
             'read_at',
             'created_at'
-        ]);
+        ])->whereNull('read_at')->sortByDesc('created_at');
 
         $notifications->map(function ($notification) {
             $notification->markAsRead();
         });
+
         return $this->respondWithSuccess('Notifications retrieved successfully', $notifications);
     }
 
