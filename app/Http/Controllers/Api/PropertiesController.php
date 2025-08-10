@@ -214,6 +214,7 @@ class PropertiesController extends ApiController
         $properties = $query->where('status', Status::APPROVED)
             ->with('category')
             ->available()
+            ->latest();
             ->paginate();
         return $this->respondWithSuccess("Properties fetched successfully", $properties);
     }
