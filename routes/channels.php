@@ -16,3 +16,13 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('conversation.{conversationId}', function ($user, $conversationId) {
+    \Log::info("Checking access for user {$user->id} to conversation {$conversationId}");
+    return true;
+});
+
+Broadcast::private('conversation.{conversationId}', function ($user, $conversationId) {
+    \Log::info("Checking access for user {$user->id} to conversation {$conversationId}");
+    return true;
+});

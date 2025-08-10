@@ -10,7 +10,10 @@ use App\Http\Controllers\Api\PropertiesController;
 use App\Http\Controllers\Api\ServerController;
 use App\Http\Controllers\Api\User\ProfileController;
 use App\Http\Controllers\RoommateController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+
 
 // Public routes
 Route::get('/', [ServerController::class, 'index']);
@@ -41,6 +44,7 @@ Route::get('/categories', [CategoriesController::class, 'getCategories']);
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
 
+    Broadcast::routes();
 
     // User Profile
     Route::prefix('user')->group(function () {

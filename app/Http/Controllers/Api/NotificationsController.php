@@ -19,7 +19,7 @@ class NotificationsController extends ApiController
             'created_at'
         ])->whereNull('read_at')->sortByDesc('created_at');
 
-        $notifications->map(function ($notification) {
+        $notifications->map(callback: function ($notification) {
             $notification->markAsRead();
         });
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\MessageEvent;
 use App\Models\Conversation;
 use App\Models\MediaAsset;
 use App\Models\Message;
@@ -110,6 +111,10 @@ class ChatController extends ApiController
                 ]);
             }
         }
+
+        MessageEvent::dispatch($message, $conversation->id);
+
+        MessageEvent::broadcast($message, $conversation->id);
 
         return $this->respondWithSuccess("Sent message", $message, 201);
     }
