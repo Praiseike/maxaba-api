@@ -31,6 +31,9 @@ class NotificationsController extends ApiController
 
         return $this->respondWithSuccess("Fetched notification stats", [
             'unread_count' => $user->notifications()->whereNull('read_at')->count(),
+            'unread_messages_count' => $user->conversations()->whereHas('messages', function ($query) {
+                $query->whereNull('read_at');
+            })->count(),
         ]);
     }
 }
