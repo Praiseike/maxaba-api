@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\MessageEvent;
+use App\Events\UserTyping;
 use App\Models\Conversation;
 use App\Models\MediaAsset;
 use App\Models\Message;
@@ -12,14 +13,26 @@ class ChatController extends ApiController
 {
 
 
-    private function getConversation($user_id, $recipient_id, $property_id = null){
+    private function getConversation($user_id, $recipient_id, $property_id = null)
+    {
         return Conversation::firstOrCreate([
             'user_id' => min($user_id, $recipient_id),
             'recipient_id' => max($user_id, $recipient_id),
             'property_id' => $property_id,
         ]);
     }
-    
+
+
+    public function typing(Request $request)
+    {
+        UserTyping::dispatch(
+            auth()->user()->id,
+            $request->conversation_id,
+            $request->is_typing
+        );
+
+        return response()->json(['status' => 'sent']);
+    }
 
     public function createConversation(Request $request)
     {
@@ -40,7 +53,7 @@ class ChatController extends ApiController
             'recipient:id,first_name,last_name,email,profile_image',
             'property:id,title,location',
         ]));
-        
+
         return $this->respondWithSuccess("Conversation created", $conversation, 201);
     }
 
@@ -114,46 +127,46 @@ class ChatController extends ApiController
 
         MessageEvent::dispatch($message, $conversation->id);
 
-        MessageEvent::broadcast($message, $conversation->id);
-
         return $this->respondWithSuccess("Sent message", $message, 201);
     }
     public function getConversations(Request $request)
     {
         $userId = auth()->id();
-    
+
         $conversations = Conversation::where(function ($query) use ($userId) {
-                $query->where('user_id', $userId)
-                      ->orWhere('recipient_id', $userId);
-            })
+            $query->where('user_id', $userId)
+                ->orWhere('recipient_id', $userId);
+        })
             ->with([
                 'user:id,first_name,last_name,uuid,email,profile_image',
                 'recipient:id,first_name,last_name,uuid,email,profile_image',
                 'property:id,title,location',
             ])
 
-            ->withCount(['messages as unread_count' => function ($query) use ($userId) {
-                $query->where('user_id', '!=', $userId)
-                      ->where('read_at', null);
-            }])
+            ->withCount([
+                'messages as unread_count' => function ($query) use ($userId) {
+                    $query->where('user_id', '!=', $userId)
+                        ->where('read_at', null);
+                }
+            ])
             ->orderBy('last_message_at', 'desc')
             ->get()
             ->map(function ($conversation) use ($userId) {
-                $otherUser = $conversation->user_id === $userId 
-                    ? $conversation->recipient 
+                $otherUser = $conversation->user_id === $userId
+                    ? $conversation->recipient
                     : $conversation->user;
-                
+
                 return [
                     'id' => $conversation->id,
                     'other_user' => $otherUser,
                     'property' => $conversation->property,
                     'unread_count' => $conversation->unread_count,
                     'last_message_at' => $conversation->last_message_at,
-                    'last_message' => $conversation->last_message ,
+                    'last_message' => $conversation->last_message,
                     'created_at' => $conversation->created_at,
                 ];
             });
-    
+
         return $this->respondWithSuccess("Fetched conversations", $conversations);
     }
 
