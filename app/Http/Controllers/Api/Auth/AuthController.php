@@ -43,7 +43,7 @@ class AuthController extends ApiController
         ]);
     
         $user = User::where('email', $request->email)
-                    // ->where('verification_token', $request->token)
+                    ->where('verification_token', $request->token)
                     ->first();
     
         if (!$user) {
