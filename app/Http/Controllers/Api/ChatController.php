@@ -73,7 +73,7 @@ class ChatController extends ApiController
     {
 
         $request->validate([
-            'content' => 'required|string',
+            'content' => 'required_if:type,text|string',
             'property_id' => 'nullable|exists:properties,id',
             'recipient_id' => 'required|exists:users,id',
             'type' => 'required|string|in:text,image,audio',
