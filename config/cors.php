@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:8000', 'https://maxaba.com', 'https://www.maxaba.com'],
+    'allowed_origins' => ['http://localhost:3000', 'http://192.168.1.14:3000', 'http://localhost:5173', 'http://localhost:8000', 'https://maxaba.com', 'https://www.maxaba.com'],
 
     'allowed_origins_patterns' => [],
 
