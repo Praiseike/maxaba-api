@@ -32,7 +32,7 @@ class RoommateController extends ApiController
             });
         }
 
-        $requests = $query->paginate(10);
+        $requests = $query->latest()->paginate(10);
         
         return $this->respondWithSuccess("Fetched roommates",$requests);
     }
