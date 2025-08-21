@@ -191,7 +191,7 @@ class PropertiesController extends ApiController
             $query->where('offer_type', $request->offer_type);
         }
 
-        $feats = ["bathrooms", "bedrooms", "livingrooms","kitchens"];
+        $feats = ["bathrooms", "bedrooms", "livingrooms", "kitchens"];
 
         foreach ($feats as $feat) {
             if ($request->filled($feat)) {
@@ -206,14 +206,17 @@ class PropertiesController extends ApiController
                 $query->whereJsonContains('amenities', $amenity);
             }
         }
-        
-        if($request->filled('randomize')){
+
+        if ($request->filled('randomize')) {
             $query->inRandomOrder();
         }
 
         $properties = $query->where('status', Status::APPROVED)
-            ->with('category')
             ->available()
+            ->whereHas('user', function ($query) {
+                $query->where('account_status', 'active');
+            })
+            ->with('category')
             ->latest()
             ->paginate();
         return $this->respondWithSuccess("Properties fetched successfully", $properties);
