@@ -20,6 +20,10 @@ Route::get('/', [ServerController::class, 'index']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/verify', [AuthController::class, 'verifyToken']);
 
+
+Route::get('/maintenance/status', [ServerController::class, 'status']);
+
+
 // Public property-related routes
 Route::prefix('open')->group(function () {
     Route::get('roommates', [RoommateController::class, 'index']);

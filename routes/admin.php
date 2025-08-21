@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin\AgentsController;
 use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\DashboardController;
+use App\Http\Controllers\Api\Admin\MaintenanceModeController;
 use App\Http\Controllers\Api\Admin\PropertiesController;
 use App\Http\Controllers\Api\CategoriesController;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [CategoriesController::class, 'getAmenities']);
     });
 
+
+    Route::prefix('maintenance')->group(function () {
+        Route::get('/', [MaintenanceModeController::class, 'index']);
+        Route::put('/', [MaintenanceModeController::class, 'update']);
+        Route::post('/toggle', [MaintenanceModeController::class, 'toggle']);
+    });
 
     Route::post('/app-logo', [DashboardController::class, 'uploadAppLogo']);
     Route::post('/app-favicon', [DashboardController::class, 'uploadAppFavicon']);
