@@ -35,6 +35,7 @@ class User extends Authenticatable
         'last_name',
         'google_id',
         'account_status',
+        'last_seen_at',
         'account_type',
         'bio'
     ];
@@ -72,6 +73,42 @@ class User extends Authenticatable
     }
     
 
+    public function isOnline(): bool
+    {
+        return $this->last_seen_at && $this->last_seen_at->gt(now()->subMinutes(5));
+    }
+
+    /**
+     * Get formatted last seen time
+     */
+    public function getLastSeenAttribute(): string
+    {
+        if (!$this->last_seen_at) {
+            return 'Never';
+        }
+
+        if ($this->isOnline()) {
+            return 'Online';
+        }
+
+        return $this->last_seen_at->diffForHumans();
+    }
+
+    /**
+     * Scope to get online users
+     */
+    public function scopeOnline($query)
+    {
+        return $query->where('last_seen_at', '>', now()->subMinutes(5));
+    }
+
+    /**
+     * Scope to get users seen within specific time
+     */
+    public function scopeSeenWithin($query, int $minutes)
+    {
+        return $query->where('last_seen_at', '>', now()->subMinutes($minutes));
+    }
 
     public function getProfileImageUrlAttribute()
     {
@@ -105,6 +142,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'account_status' => Status::class,
+        'last_seen_at' => 'datetime',
     ];
 
 
