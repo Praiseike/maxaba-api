@@ -55,6 +55,8 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'admin_url' => env('ADMIN_URL', 'https://admin.maxaba.com'),
+    'users_url' => env('ADMIN_URL', 'https://maxaba.com'),
 
     'asset_url' => env('ASSET_URL', '/'),
 

@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\SeoSettingController;
 use App\Http\Controllers\Api\Admin\AgentsController;
 use App\Http\Controllers\Api\Admin\AuthController;
@@ -70,6 +72,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('seo/landing', [SeoSettingController::class, 'saveLandingPageSEO']);
     Route::post('seo/landing/reset', [SeoSettingController::class, 'resetLandingPageSEO']);
 
+    Route::apiResource('admins', AdminController::class);
+    
+    // Additional admin management routes
+    Route::post('admins/{id}/resend-credentials', [AdminController::class, 'resendCredentials']);
+    Route::patch('admins/{id}/toggle-status', [AdminController::class, 'toggleStatus']);
+    Route::post('admins/bulk-action', [AdminController::class, 'bulkAction']);
+    
  
 });
 

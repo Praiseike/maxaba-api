@@ -59,7 +59,10 @@ class AuthController extends ApiController
 
         // // Clear the token after successful verification
         $admin->token = null;
+        $admin->last_login_at = now();
+        $admin->last_login_ip = $request->ip();
         $admin->save();
+
 
         // Create Sanctum token
         $token = $admin->createToken('admin-token')->plainTextToken;
@@ -84,18 +87,18 @@ class AuthController extends ApiController
     {
         $request->validate([
             'current_password' => ['required'],
-            'password' => ['required', 'string', 'confirmed'], 
+            'password' => ['required', 'string', 'confirmed'],
         ]);
-    
+
         $admin = Auth::user();
-    
+
         if (!Hash::check($request->current_password, $admin->password)) {
             return $this->errorForbidden('Current password is incorrect');
         }
-    
+
         $admin->password = Hash::make($request->password);
         $admin->save();
-    
+
         return $this->respondWithSuccess('Password reset successfully');
     }
 }

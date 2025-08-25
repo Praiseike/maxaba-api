@@ -16,6 +16,9 @@ class AdminSeeder extends Seeder
         Admin::truncate();
         Admin::create([
             'email' => 'admin@gmail.com',
+            'name' => 'Super Admin',
+            'is_active' => true,
+            'role' => 'super_admin',
             'password' => bcrypt('password'),
         ]);
     }
