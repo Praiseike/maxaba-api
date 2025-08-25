@@ -26,6 +26,9 @@ class AuthController extends ApiController
             ['account_type' => 'user', 'account_status' => 'pending']
         );
 
+        if($user->account_status == 'suspended') {
+            return $this->respondWithError('Your account is suspended. Please contact support.', 403);
+        }
         $verificationToken = rand(1000, 9999);
         $user->verification_token = $verificationToken;
         $user->save();
