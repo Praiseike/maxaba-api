@@ -67,7 +67,7 @@
         .login-button {
             display: inline-block;
             background: #7f56d9;
-            color: #fff;
+            color: #fff !important;
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 4px;
