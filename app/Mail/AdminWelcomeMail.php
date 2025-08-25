@@ -41,7 +41,7 @@ class AdminWelcomeMail extends Mailable implements ShouldQueue
                        'admin' => $this->admin,
                        'password' => $this->password,
                        'isPasswordReset' => $this->isPasswordReset,
-                       'loginUrl' => config('app.url') . '/ogin',
+                       'loginUrl' => config('app.admin_url') . '/ogin',
                        'appName' => config('app.name', 'Admin Dashboard')
                    ]);
     }

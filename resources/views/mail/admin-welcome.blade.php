@@ -6,130 +6,101 @@
     <title>{{ $isPasswordReset ? 'Password Reset' : 'Welcome to Admin Dashboard' }}</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background: #f7f7f7;
+            color: #333;
         }
         .container {
             max-width: 600px;
             margin: 20px auto;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px 20px;
+            background: #4a6ee0;
+            color: #fff;
+            padding: 20px;
             text-align: center;
         }
         .header h1 {
             margin: 0;
-            font-size: 28px;
-            font-weight: 300;
+            font-size: 22px;
         }
         .content {
-            padding: 40px 30px;
+            padding: 20px;
+            font-size: 15px;
         }
         .greeting {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
         .credentials-box {
-            background: #f8f9ff;
-            border: 2px solid #e1e5fe;
-            border-radius: 8px;
-            padding: 25px;
-            margin: 25px 0;
-            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            background: #fafafa;
         }
         .credentials-box h3 {
-            margin-top: 0;
-            color: #5c6bc0;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin: 0 0 10px;
+            font-size: 14px;
+            color: #4a6ee0;
         }
         .credential-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 15px 0;
-            padding: 10px 15px;
-            background: white;
-            border-radius: 5px;
-            border-left: 4px solid #5c6bc0;
+            margin: 8px 0;
+            font-size: 14px;
         }
         .credential-label {
-            font-weight: 600;
-            color: #666;
+            font-weight: bold;
+            display: inline-block;
+            width: 80px;
         }
         .credential-value {
-            font-family: 'Courier New', monospace;
-            background: #e8eaf6;
-            padding: 5px 10px;
-            border-radius: 4px;
-            color: #333;
-            font-weight: bold;
+            font-family: monospace;
+            background: #eee;
+            padding: 3px 6px;
+            border-radius: 3px;
         }
         .login-button {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 30px;
+            background: #4a6ee0;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
             text-decoration: none;
-            border-radius: 25px;
-            font-weight: 600;
+            font-weight: bold;
             margin: 20px 0;
-            transition: transform 0.2s;
-        }
-        .login-button:hover {
-            transform: translateY(-2px);
         }
         .warning-box {
             background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 5px;
+            border: 1px solid #ffe08a;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
             margin: 20px 0;
         }
-        .warning-box strong {
-            display: block;
-            margin-bottom: 5px;
-        }
         .footer {
-            background: #f8f9fa;
-            padding: 20px;
+            background: #f1f1f1;
+            padding: 15px;
             text-align: center;
+            font-size: 13px;
             color: #666;
-            font-size: 14px;
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid #ddd;
         }
         .footer a {
-            color: #667eea;
+            color: #4a6ee0;
             text-decoration: none;
         }
         @media (max-width: 600px) {
             .container {
                 margin: 10px;
-                border-radius: 5px;
             }
-            .content {
-                padding: 20px 15px;
-            }
-            .credential-item {
-                flex-direction: column;
-                text-align: left;
-            }
-            .credential-value {
-                margin-top: 5px;
-                align-self: stretch;
-                text-align: center;
+            .credential-label {
+                display: block;
+                margin-bottom: 3px;
             }
         }
     </style>
@@ -152,46 +123,42 @@
             @if($isPasswordReset)
                 <p>Your admin account password has been reset. Here are your new login credentials:</p>
             @else
-                <p>Welcome to the {{ $appName }}! An admin account has been created for you with the following credentials:</p>
+                <p>Welcome to {{ $appName }}! An admin account has been created for you with the following credentials:</p>
             @endif
 
             <div class="credentials-box">
                 <h3>{{ $isPasswordReset ? 'New Login Credentials' : 'Your Login Credentials' }}</h3>
-                
                 <div class="credential-item">
-                    <span class="credential-label">📧 Email:</span>
+                    <span class="credential-label">Email:</span>
                     <span class="credential-value">{{ $admin->email }}</span>
                 </div>
-                
                 <div class="credential-item">
-                    <span class="credential-label">🔑 Password:</span>
+                    <span class="credential-label">Password:</span>
                     <span class="credential-value">{{ $password }}</span>
                 </div>
             </div>
 
             <div class="warning-box">
-                <strong>⚠️ Important Security Notice:</strong>
-                Please log in and change your password immediately after your first login. This temporary password should not be shared with anyone.
+                <strong>⚠️ Security Notice:</strong>
+                Please log in and change your password immediately after your first login.
             </div>
 
-            <div style="text-align: center; margin: 30px 0;">
-                <a href="{{ $loginUrl }}" class="login-button">
-                    🚀 Access Admin Dashboard
-                </a>
+            <div style="text-align: center;">
+                <a href="{{ $loginUrl }}" class="login-button">🚀 Access Admin Dashboard</a>
             </div>
 
             @if(!$isPasswordReset)
                 <p>As an admin, you'll have access to:</p>
-                <ul style="color: #666; padding-left: 20px;">
-                    <li>User management and oversight</li>
-                    <li>Content moderation tools</li>
-                    <li>System analytics and reports</li>
-                    <li>Administrative settings</li>
+                <ul>
+                    <li>User management</li>
+                    <li>Content moderation</li>
+                    <li>Analytics and reports</li>
+                    <li>Admin settings</li>
                 </ul>
             @endif
 
-            <p style="color: #666; font-size: 14px; margin-top: 30px;">
-                If you have any questions or need assistance, please don't hesitate to contact our support team.
+            <p style="font-size: 13px; color: #555;">
+                If you have any questions, please contact our support team.
             </p>
         </div>
 
@@ -200,8 +167,8 @@
                 This email was sent from {{ $appName }}<br>
                 <a href="{{ config('app.url') }}">{{ config('app.url') }}</a>
             </p>
-            <p style="margin-top: 10px; font-size: 12px; color: #999;">
-                This is an automated message, please do not reply to this email.
+            <p style="font-size: 12px; color: #999;">
+                This is an automated message, please do not reply.
             </p>
         </div>
     </div>
