@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\FollowController;
 use App\Http\Controllers\Api\NotificationsController;
 use App\Http\Controllers\Api\PropertiesController;
+use App\Http\Controllers\Api\SeoController;
 use App\Http\Controllers\Api\ServerController;
 use App\Http\Controllers\Api\User\ProfileController;
 use App\Http\Controllers\RoommateController;
@@ -22,7 +23,10 @@ Route::post('/auth/verify', [AuthController::class, 'verifyToken']);
 
 
 Route::get('/maintenance/status', [ServerController::class, 'status']);
+Route::get('/seo/{slug}', [SeoController::class, 'show']);
+Route::get('/seo', [SeoController::class, 'index']);
 
+Route::get('seo/landing/public', [App\Http\Controllers\Api\Admin\SeoSettingController::class, 'getPublicLandingPageSEO']);
 
 // Public property-related routes
 Route::prefix('open')->group(function () {

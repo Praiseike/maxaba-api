@@ -23,7 +23,13 @@ class LastSeenMiddleware
 
         // Only track for authenticated users and successful requests
         if (Auth::check() && $response->getStatusCode() < 400) {
+            // Skip tracking for admin users (they use 'admin' guard)
+            if (Auth::guard('admin')->check()) {
+                return $response;
+            }
+            
             $user = Auth::user();
+            
             $userId = $user->id;
             $now = now();
             

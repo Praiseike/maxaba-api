@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\SeoSettingController;
 use App\Http\Controllers\Api\Admin\AgentsController;
 use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\MaintenanceModeController;
 use App\Http\Controllers\Api\Admin\PropertiesController;
+use App\Http\Controllers\Api\Admin\UsersController;
 use App\Http\Controllers\Api\CategoriesController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +29,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/stats', [AgentsController::class, 'getStats']);
         Route::get('/{agent}', [AgentsController::class, 'show']);
         Route::put('/{agent}/status', [AgentsController::class, 'updateStatus']);
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UsersController::class, 'index']);
+        Route::post('/', [UsersController::class, 'addUser']);
+        Route::get('/stats', [UsersController::class, 'getStats']);
+        Route::get('/{user}', [UsersController::class, 'show']);
+        Route::put('/{user}/status', [UsersController::class, 'updateStatus']);
     });
 
     Route::prefix('properties')->group(function () {
@@ -54,5 +64,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/app-logo', [DashboardController::class, 'uploadAppLogo']);
     Route::post('/app-favicon', [DashboardController::class, 'uploadAppFavicon']);
+
+
+    Route::get('seo/landing', [SeoSettingController::class, 'getLandingPageSEO']);
+    Route::post('seo/landing', [SeoSettingController::class, 'saveLandingPageSEO']);
+    Route::post('seo/landing/reset', [SeoSettingController::class, 'resetLandingPageSEO']);
+
+ 
 });
 

@@ -151,6 +151,12 @@ class User extends Authenticatable
         return $query->where('account_type', User::TYPE_AGENT);
     }
 
+    public function scopeUsers($query)
+    {
+        return $query->where('account_type', User::TYPE_USER);
+    }
+
+
 
     public function getNameAttribute()
     {
