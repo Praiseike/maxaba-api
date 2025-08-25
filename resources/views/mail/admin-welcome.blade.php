@@ -20,7 +20,7 @@
             border-radius: 6px;
         }
         .header {
-            background: #4a6ee0;
+            background: #7f56d9;
             color: #fff;
             padding: 20px;
             text-align: center;
@@ -47,7 +47,7 @@
         .credentials-box h3 {
             margin: 0 0 10px;
             font-size: 14px;
-            color: #4a6ee0;
+            color: #7f56d9;
         }
         .credential-item {
             margin: 8px 0;
@@ -66,8 +66,9 @@
         }
         .login-button {
             display: inline-block;
-            background: #4a6ee0;
+            background: #7f56d9;
             color: #fff;
+            text-decoration: none;
             padding: 10px 20px;
             border-radius: 4px;
             text-decoration: none;
@@ -91,7 +92,7 @@
             border-top: 1px solid #ddd;
         }
         .footer a {
-            color: #4a6ee0;
+            color: #7f56d9;
             text-decoration: none;
         }
         @media (max-width: 600px) {
