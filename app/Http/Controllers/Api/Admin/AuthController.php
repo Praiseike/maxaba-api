@@ -27,6 +27,11 @@ class AuthController extends ApiController
             ], 401);
         }
 
+        if(!$admin->is_active) {
+            return response()->json([
+                'message' => 'Your account is inactive. Please contact the administrator.'
+            ], 403);
+        }
 
         $verificationCode = rand(1000, 9999);
 
