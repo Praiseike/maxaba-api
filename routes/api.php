@@ -69,13 +69,15 @@ Route::middleware('auth:sanctum')->group(function () {
     // Roommates
     Route::prefix('roommates')->group(function () {
         Route::post('/', [RoommateController::class, 'store']);
+        Route::delete('/{id}', [RoommateController::class, 'destroy']);
+
     });
 
     // Authenticated property actions
     Route::prefix('properties')->group(function () {
         Route::get('/', [PropertiesController::class, 'getProperties']);
         Route::get('/i/{slug}', [PropertiesController::class, 'getPropertyBySlug']);
-        
+
         Route::post('/', [PropertiesController::class, 'store']);
         Route::get('/favourites', [PropertiesController::class, 'myFavourites']);
         Route::post('/{property}/favourite', [PropertiesController::class, 'favourite']);
