@@ -23,7 +23,7 @@ class AuthController extends ApiController
 
         $user = User::firstOrCreate(
             ['email' => $request->email],
-            ['account_type' => 'user', 'account_status' => 'pending']
+            ['account_type' => 'agent', 'account_status' => 'active']
         );
 
         if($user->account_status == 'suspended') {

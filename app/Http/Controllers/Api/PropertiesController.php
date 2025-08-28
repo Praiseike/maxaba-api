@@ -241,6 +241,18 @@ class PropertiesController extends ApiController
             return $this->errorNotFound('Property not found');
         }
 
+        $property['other_listings_by_user'] = Property::where('user_id', $property->user_id)
+            ->where('id', '!=', $property->id)
+            ->where('status', Status::APPROVED)
+            ->available()
+            ->whereHas('user', function ($query) {
+                $query->where('account_status', 'active');
+            })
+            ->with('category')
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
+
         return $this->respondWithSuccess("Property fetched successfully", $property);
     }
 
