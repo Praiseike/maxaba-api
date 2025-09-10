@@ -15,7 +15,7 @@ class ProfileController extends ApiController
     {
         $user = $request->user();
 
-        if(!$user) {
+        if (!$user) {
             return $this->respondWithError("User not Logged in", 404);
         }
 
@@ -31,7 +31,7 @@ class ProfileController extends ApiController
             'account_type' => $user->account_type,
             'followers' => $user->followers()->count(),
             'following' => $user->following()->count(),
-            'is_following' => (bool) $request->user()?->isFollowing($user) ,
+            'is_following' => (bool) $request->user()?->isFollowing($user),
             'bio' => $user->bio,
             'properties' => $user->properties()->with('category')->get(),
             'location' => $user->location,
@@ -42,7 +42,7 @@ class ProfileController extends ApiController
     public function getUser(Request $request, User $user)
     {
 
-        $response =  [
+        $response = [
             "id" => $user->id,
             "uuid" => $user->uuid,
             "first_name" => $user->first_name,
@@ -59,7 +59,7 @@ class ProfileController extends ApiController
             'location' => $user->location,
         ];
 
-        
+
         $response['is_following'] = UserFollower::where('user_id', $user->id)
             ->where('follower_id', auth()->id())
             ->exists();
@@ -77,7 +77,7 @@ class ProfileController extends ApiController
         $request->validate([
             "first_name" => "required|string",
             "last_name" => "required|string",
-            "ethnicity" => "nullable|string",
+            // "ethnicity" => "nullable|string",
             "phone_number" => "required|string",
             "password" => "required|string",
             "password_confirmation" => "required|string|same:password",
@@ -85,7 +85,8 @@ class ProfileController extends ApiController
 
 
         $user = $request->user();
-        $user->update($request->only("first_name", "ethnicity" , "last_name", "phone_number", "password"));
+        // $user->update($request->only("first_name", "ethnicity" , "last_name", "phone_number", "password"));
+        $user->update($request->only("first_name", "last_name", "phone_number", "password"));
         $user->save();
 
         return $this->respondWithSuccess("Updated profile", $user);
@@ -116,8 +117,8 @@ class ProfileController extends ApiController
         $user = $request->user();
 
         $request->validate([
-            //     "first_name" => "sometimes|nullable|string|max:255", 
-            //     "last_name" => "sometimes|nullable|string|max:255",  
+            "first_name" => "sometimes|nullable|string|max:255",
+            "last_name" => "sometimes|nullable|string|max:255",
             "phone_number" => "sometimes|nullable|string|max:15",
             "address" => "sometimes|nullable|string|max:255",
             "ethnicity" => "sometimes|nullable|string|max:255",
@@ -127,8 +128,8 @@ class ProfileController extends ApiController
         ]);
 
         $user->update($request->only([
-            // "first_name",
-            // "last_name",
+            "first_name",
+            "last_name",
             "ethnicity",
             "phone_number",
             "address",
