@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Property;
 use App\Notifications\NewPropertyNotification;
-use App\Services\GoogleMapsService;
+use App\Services\LocationIQService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -167,27 +167,29 @@ class PropertiesController extends ApiController
         if ($request->filled('lat') && $request->filled('lng')) {
             $lat = $request->lat;
             $lng = $request->lng;
-            // $radius = $request->filled('radius') ? (int)$request->radius : 10; // default radius 10 km
-
-            // // Haversine formula to calculate distance
-            // $haversine = "(6371 * acos(cos(radians(?)) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(location, '$.lat')))) * cos(radians(JSON_UNQUOTE(JSON_EXTRACT(location, '$.lng'))) - radians(?)) + sin(radians(?)) * sin(radians(JSON_UNQUOTE(JSON_EXTRACT(location, '$.lat'))))))";
-
-            // $query->whereRaw("$haversine < ?", [$lat, $lng, $lat, $radius]);
-
+        
             $cacheKey = "reverse_geocode_{$lat}_{$lng}";
             $cacheTTL = now()->addHours(24);
-
+        
             $locationData = cache()->remember($cacheKey, $cacheTTL, function() use ($lat, $lng) {
-                return GoogleMapsService::reverseGeocode($lat, $lng);
+                return LocationIQService::reverseGeocode($lat, $lng);
             });
-
-            \Log::info("Location data from cache or API", [
-                'cache_key' => $cacheKey,
-                'location_data' => $locationData,
-            ]);
-
-            
+        
+            $city = $locationData['address']['city'] ?? null;
+        
+            if ($city) {
+                $cityLower = strtolower($city);
+                \Log::info("Filtering properties by city: {$cityLower}");
+                $query->orderByRaw(
+                    "CASE 
+                        WHEN LOWER(JSON_UNQUOTE(JSON_EXTRACT(location, '$.city'))) = ? THEN 0 
+                        ELSE 1 
+                    END", 
+                    [$cityLower]
+                );
+            }
         }
+        
 
 
 
@@ -245,6 +247,7 @@ class PropertiesController extends ApiController
             ->with('category')
             ->latest()
             ->paginate();
+            
         return $this->respondWithSuccess("Properties fetched successfully", $properties);
     }
 

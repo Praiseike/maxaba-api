@@ -41,4 +41,8 @@ return [
     'google_maps' => [
         'key' => env('GOOGLE_MAPS_API_KEY'),
     ],
+
+    'location_iq' => [
+        'key' => env('LOCATION_IQ_API_KEY'),
+    ],
 ];
