@@ -74,7 +74,6 @@ class PropertiesController extends ApiController
             'verified' => false,
             'other_information' => $validated['other_information'] ?? null,
             'charges' => $validated['charges'] ?? null,
-
         ]);
 
 
@@ -133,7 +132,7 @@ class PropertiesController extends ApiController
             });
         }
 
-        if($request->filled('amenities')) {
+        if ($request->filled('amenities')) {
             foreach (explode(',', $request->amenities) as $amenity) {
                 $query->whereJsonContains('amenities', trim($amenity));
             }
@@ -161,7 +160,7 @@ class PropertiesController extends ApiController
         return $this->respondWithSuccess("Property deleted successfully");
     }
 
-    
+
 
     public function updatePropertyStatus(Request $request, $id)
     {
@@ -184,7 +183,7 @@ class PropertiesController extends ApiController
 
         $property->save();
 
-        $property->user->notify(new PropertyStatusUpdateNotification($property, $request->status == Status::REJECTED ? $request->reason : "You property has been ". strtolower($property->status->value). " by our admins"));
+        $property->user->notify(new PropertyStatusUpdateNotification($property, $request->status == Status::REJECTED ? $request->reason : "You property has been " . strtolower($property->status->value) . " by our admins"));
 
         return $this->respondWithSuccess("Property status updated successfully", $property);
     }
@@ -211,7 +210,9 @@ class PropertiesController extends ApiController
     public function getStats()
     {
         return $this->respondWithSuccess('', [
-            'total_houses' => Property::withoutTrashed(),
+            'total_houses' => Property::withoutTrashed()->where('status', Status::APPROVED)
+                ->orWhere('status', Status::PENDING)
+                ->count(),
             'pending_houses' => Property::where('status', Status::PENDING)->count(),
         ]);
     }
