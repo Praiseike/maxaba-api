@@ -211,7 +211,7 @@ class PropertiesController extends ApiController
     public function getStats()
     {
         return $this->respondWithSuccess('', [
-            'total_houses' => Property::count(),
+            'total_houses' => Property::withoutTrashed(),
             'pending_houses' => Property::where('status', Status::PENDING)->count(),
         ]);
     }
