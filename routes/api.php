@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PropertiesController;
 use App\Http\Controllers\Api\SeoController;
 use App\Http\Controllers\Api\ServerController;
 use App\Http\Controllers\Api\User\ProfileController;
+use App\Http\Controllers\Api\CallController;
 use App\Http\Controllers\RoommateController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,7 @@ Route::get('/categories', [CategoriesController::class, 'getCategories']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Broadcast::routes();
+
 
     // User Profile
     Route::prefix('user')->group(function () {
@@ -113,6 +115,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Follow/Unfollow
     Route::post('/follow/{user}', [FollowController::class, 'follow']);
     Route::delete('/unfollow/{user}', [FollowController::class, 'unfollow']);
+
+    Route::prefix('/calls')->group(function () {
+        Route::post('/initiate', [CallController::class, 'initiateCall']);
+        Route::post('/accept', [CallController::class, 'acceptCall']);
+        Route::post('/end', [CallController::class, 'endCall']);
+        Route::get('/contacts', [CallController::class, 'getCallContacts']);
+        Route::post('/presence', [CallController::class, 'updatePresence']);
+        Route::get('/availability/{user}', [CallController::class, 'checkAvailability']);
+        Route::get('/jitsi-config', [CallController::class, 'getJitsiConfig']);
+    });
+
 });
 
 

@@ -34,3 +34,20 @@ Route::get('/config-clear', function () {
     Artisan::call('optimize:clear');
     return "Configuration cache cleared successfully.";
 });
+
+
+Route::post('/pusher/auth', function (Request $request) {
+    $user = Auth::user();
+    if (!$user) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    $pusher = new \Pusher\Pusher(
+        config('broadcasting.connections.pusher.key'),
+        config('broadcasting.connections.pusher.secret'),
+        config('broadcasting.connections.pusher.app_id'),
+        config('broadcasting.connections.pusher.options')
+    );
+
+    return response($pusher->socket_auth($request->channel_name, $request->socket_id));
+});

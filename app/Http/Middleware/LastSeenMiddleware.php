@@ -21,39 +21,30 @@ class LastSeenMiddleware
         // Process the request first
         $response = $next($request);
 
-        // Only track for authenticated users and successful requests
         if (Auth::check() && $response->getStatusCode() < 400) {
-            // Skip tracking for admin users (they use 'admin' guard)
+
             if (Auth::guard('admin')->check()) {
-                return $response;
+                // return $response;
             }
-            
+
             $user = Auth::user();
-            
+
             $userId = $user->id;
             $now = now();
-            
-            // Cache key for tracking last update
-            $cacheKey = "last_seen_updated_{$userId}";
-            
-            // Only update if we haven't updated in the last 2 minutes (reduces DB calls)
-            if (!Cache::has($cacheKey)) {
-                if (config('queue.default') !== 'sync') {
-                    dispatch(function () use ($userId, $now) {
-                        DB::table('users')
-                            ->where('id', $userId)
-                            ->update(['last_seen_at' => $now]);
-                    })->onQueue('low');
-                } else {
-                    // Direct database update
-                    DB::table('users')
-                        ->where('id', $userId)
-                        ->update(['last_seen_at' => $now]);
-                }
-                
 
-                Cache::put($cacheKey, true, now()->addMinutes(2));
-            }
+            $cacheKey = "last_seen_updated_{$userId}";
+
+            // \Log::info("Skipping last seen update for user {$userId}, updated recently.");
+            // Direct database update
+            DB::table('users')
+                ->where('id', $userId)
+                ->update(['last_seen_at' => $now]);
+            // Only update if we haven't updated in the last 2 minutes (reduces DB calls)
+            // if (Cache::has($cacheKey)) {
+
+
+            // } else
+            //     Cache::put($cacheKey, true, now()->addMinutes(2));
         }
 
         return $response;
