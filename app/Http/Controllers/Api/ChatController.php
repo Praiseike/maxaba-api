@@ -125,7 +125,7 @@ class ChatController extends ApiController
             }
         }
 
-        broadcast( new MessageEvent($message, $conversation->id));
+        broadcast(new MessageEvent($message, $conversation->id));
 
         return $this->respondWithSuccess("Sent message", $message, 201);
     }
