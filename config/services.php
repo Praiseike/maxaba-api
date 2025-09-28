@@ -45,4 +45,8 @@ return [
     'location_iq' => [
         'key' => env('LOCATION_IQ_API_KEY'),
     ],
+
+    'jitsi' => [
+        'domain' => env('JITSI_DOMAIN','meet.jit.si'),
+    ]
 ];

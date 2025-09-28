@@ -249,7 +249,7 @@ class CallController extends Controller
     public function getJitsiConfig()
     {
         return response()->json([
-            'domain' => config('services.jitsi.domain', 'meet.isf.es'),
+            'domain' => config('services.jitsi.domain'),
             'options' => [
                 'width' => '100%',
                 'height' => '100%',
