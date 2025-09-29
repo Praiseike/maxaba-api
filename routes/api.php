@@ -93,11 +93,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Categories
-    Route::prefix('categories')->group(function () {
-        Route::post('/', [CategoriesController::class, 'addCategory']);
-        Route::put('/{id}', [CategoriesController::class, 'updateCategory']);
-        Route::delete('/{id}', [CategoriesController::class, 'deleteCategory']);
-    });
 
     Route::prefix('notifications')->group(function () {
         Route::get('/', [NotificationsController::class, 'index']);

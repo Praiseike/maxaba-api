@@ -90,6 +90,9 @@ class CategoriesController extends ApiController
             return response()->json(['message' => 'Category not found'], 404);
         }
 
+
+        $category->properties()->update(['category_id' => null]);
+
         if ($category->image) {
             Storage::disk('public')->delete($category->image);
         }

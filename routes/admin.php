@@ -51,6 +51,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{id}', [PropertiesController::class, 'deleteProperty']);
     });
 
+    Route::prefix('categories')->group(function () {
+        Route::post('/', [CategoriesController::class, 'addCategory']);
+        Route::put('/{id}', [CategoriesController::class, 'updateCategory']);
+        Route::delete('/{id}', [CategoriesController::class, 'deleteCategory']);
+    });
 
     Route::prefix('amenities')->group(function () {
         Route::post('/', [CategoriesController::class, 'createAmenity']);
