@@ -54,7 +54,7 @@ class CategoriesController extends ApiController
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'image' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Validate image file
+            'image' => ['nullable', 'string', 'max:255'], 
         ]);
 
         $category = Category::find($id);
@@ -63,20 +63,9 @@ class CategoriesController extends ApiController
             return response()->json(['message' => 'Category not found'], 404);
         }
 
-        $imagePath = $category->image;
-
-        if ($request->hasFile('image')) {
-
-            if ($imagePath) {
-                Storage::disk('public')->delete($imagePath);
-            }
-
-            $imagePath = $request->file('image')->store('categories', 'public');
-        }
-
         $category->update([
             'name' => $request->name,
-            'image' => $imagePath,
+            'image' => $request->image,
         ]);
 
         return $this->respondWithSuccess("Category updated successfully", $category);
