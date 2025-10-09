@@ -24,9 +24,10 @@ class PropertiesController extends ApiController
             'request_data' => $request->all(),
         ]);
 
-        if (!$user->isAgent() || $user->account_status != Status::ACTIVE) {
-            return $this->errorForbidden("Must be an approved agent");
-        }
+        // if (!$user->isAgent() || $user->account_status != Status::ACTIVE) {
+        //     return $this->errorForbidden("Must be an approved agent");
+        // }
+        
         $validated = $request->validate([
             'occupant_type' => 'required|in:single,multiple,both',
             'category_id' => 'nullable|exists:categories,id',
