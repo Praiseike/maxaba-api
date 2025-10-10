@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -28,6 +29,8 @@ class VerificationTokenMail extends Mailable
     {
         return new Envelope(
             subject: 'Verification Token Mail',
+            from: new Address('noreply@maxaba.com', 'Maxaba')
+
         );
     }
 
