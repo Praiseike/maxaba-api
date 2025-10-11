@@ -169,7 +169,7 @@ class AuthController extends ApiController
                 'google_id' => $googleUser->id,
                 'profile_image' => $googleUser->picture ?? null,
                 'email_verified_at' => now(), // Google has already verified the email
-                'account_type' => User::TYPE_USER,
+                'account_type' => User::TYPE_AGENT,
                 'account_status' => 'active', // Skip pending status for Google users
             ]);
         }
