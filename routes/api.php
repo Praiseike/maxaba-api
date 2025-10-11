@@ -126,5 +126,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // New Google auth routes
 Route::post('/auth/google/verify', [AuthController::class, 'verifyGoogleToken']);
-Route::post('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle']); // Optional

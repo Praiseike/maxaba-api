@@ -26,7 +26,7 @@ class AuthController extends ApiController
             ['account_type' => 'agent', 'account_status' => 'active']
         );
 
-        if($user->account_status == 'suspended') {
+        if ($user->account_status == 'suspended') {
             return $this->respondWithError('Your account is suspended. Please contact support.', 403);
         }
         $verificationToken = rand(1000, 9999);
@@ -44,20 +44,20 @@ class AuthController extends ApiController
             'email' => 'required|email',
             'token' => 'required|numeric',
         ]);
-    
+
         $user = User::where('email', $request->email)
-                    ->where('verification_token', $request->token)
-                    ->first();
-    
+            ->where('verification_token', $request->token)
+            ->first();
+
         if (!$user) {
             return $this->respondWithError('Invalid token or email.', 401);
         }
-    
+
         $user->verification_token = null;
         $user->save();
-    
+
         $token = $user->createToken('auth')->plainTextToken;
-    
+
         return $this->respondWithSuccess('Email verified successfully.', [
             'user' => $user,
             'token' => $token,
@@ -71,16 +71,19 @@ class AuthController extends ApiController
     {
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
-            
+
             $user = $this->findOrCreateGoogleUser($googleUser);
             $token = $user->createToken('google-auth')->plainTextToken;
 
-            return $this->respondWithSuccess('Google login successful.', [
+            $userData = [
                 'user' => $user,
                 'token' => $token
-            ]);
+            ];
 
-        } catch (\Exception $e) {
+            $state = base64_encode(json_encode($userData));
+            $redirectUrl = config('services.google.redirect_frontend') . '?state=' . urlencode($state);
+            return redirect($redirectUrl);
+        } catch (\Exception $e)  {
             return $this->respondWithError('Google authentication failed.', 400);
         }
     }
@@ -98,7 +101,7 @@ class AuthController extends ApiController
             // Verify Google ID token
             $client = new \Google_Client(['client_id' => config('services.google.client_id')]);
             $payload = $client->verifyIdToken($request->token);
-            
+
             if (!$payload) {
                 return $this->respondWithError('Invalid Google token.', 400);
             }
@@ -179,8 +182,8 @@ class AuthController extends ApiController
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')
-            // ->scopes(['email', 'profile'])
+        return Socialite::driver('google')->stateless()
+            ->redirectUrl(config('services.google.redirect'))
             ->redirect();
     }
 }
