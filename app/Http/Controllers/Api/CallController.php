@@ -256,6 +256,7 @@ class CallController extends Controller
                 'parentNode' => null, // Will be set by frontend
                 'configOverwrite' => [
                     'startWithAudioMuted' => false,
+                    'disableDeepLinking' => true,
                     'startWithVideoMuted' => false,
                     'enableWelcomePage' => false,
                     'prejoinPageEnabled' => false,
