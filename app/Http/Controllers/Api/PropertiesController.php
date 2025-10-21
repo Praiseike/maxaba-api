@@ -42,7 +42,7 @@ class PropertiesController extends ApiController
             'amenities' => 'required|array|min:1',
             'amenities.*' => 'string|max:255',
             'files' => 'required|array|min:1',
-            'files.*' => 'file|mimes:jpg,jpeg,png,webp,mp4,webm,avi|max:2048',
+            'files.*' => 'file|mimes:jpg,jpeg,png,webp,mp4,webm,avi|max:'.(1024 * 20),
             'offer_type' => 'required|in:rent,sale',
             'offer_duration' => 'nullable|string',
             'other_information' => 'nullable|array',
