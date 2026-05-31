@@ -31,10 +31,12 @@ class User extends Authenticatable
         'address',
         'location',
         'phone_number',
+        'whatsapp_number',
         'first_name',
         'last_name',
         'google_id',
         'account_status',
+        'registration_reminder_sent',
         'last_seen_at',
         'account_type',
         'bio'

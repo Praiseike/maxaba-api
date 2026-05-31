@@ -38,6 +38,8 @@ class CallController extends Controller
 
         // Check if receiver is online
         if (!$receiver->isOnline()) {
+            $receiver->notify(new \App\Notifications\MissedCallNotification($caller, $callType));
+
             return response()->json([
                 'success' => false,
                 'message' => 'User is currently offline',
@@ -131,13 +133,15 @@ class CallController extends Controller
         $request->validate([
             'call_id' => 'required',
             'other_user_id' => 'required|exists:users,id',
-            'reason' => 'required|in:rejected,ended,busy,no_answer'
+            'reason' => 'required|in:rejected,ended,busy,no_answer',
+            'call_type' => 'nullable|in:voice,video'
         ]);
 
         $user = Auth::user();
         $callId = $request->call_id;
         $otherUserId = $request->other_user_id;
         $reason = $request->reason;
+        $callType = $request->input('call_type', 'voice');
 
         $endData = [
             'call_id' => $callId,
@@ -152,6 +156,14 @@ class CallController extends Controller
 
         // Broadcast call ended event
         broadcast(new CallEnded($endData, $otherUserId));
+
+        // If call was unanswered or busy, notify receiver
+        if (in_array($reason, ['no_answer', 'busy'])) {
+            $receiver = User::find($otherUserId);
+            if ($receiver) {
+                $receiver->notify(new \App\Notifications\MissedCallNotification($user, $callType));
+            }
+        }
 
         return response()->json([
             'success' => true,

@@ -78,7 +78,7 @@ class ChatController extends ApiController
             'recipient_id' => 'required|exists:users,id',
             'type' => 'required|string|in:text,image,audio',
             'files' => 'nullable|array',
-            'files.*' => 'file|mimes:jpg,jpeg,png,gif,mp3,mp4,avi,mov,webm',
+            'files.*' => 'file|mimes:jpg,jpeg,png,gif,mp3,mp4,avi,mov,webm,wav,ogg,m4a,aac,3gp,mpeg|max:20480',
         ]);
 
         $user = auth()->user();
@@ -127,6 +127,11 @@ class ChatController extends ApiController
 
         broadcast(new MessageEvent($message, $conversation->id));
 
+        $recipient = \App\Models\User::find($request->recipient_id);
+        if ($recipient) {
+            $recipient->notify(new \App\Notifications\NewMessageNotification($user, $message));
+        }
+
         return $this->respondWithSuccess("Sent message", $message, 201);
     }
     public function getConversations(Request $request)
@@ -173,7 +178,7 @@ class ChatController extends ApiController
     public function createAsset(Request $request, $messageId)
     {
         $request->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,gif,mp3,mp4,avi,mov,webm',
+            'file' => 'required|file|mimes:jpg,jpeg,png,gif,mp3,mp4,avi,mov,webm,wav,ogg,m4a,aac,3gp,mpeg|max:20480',
             'message_id' => 'required|exists:messages,id',
         ]);
 

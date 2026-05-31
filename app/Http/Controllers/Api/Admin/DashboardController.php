@@ -30,6 +30,23 @@ class DashboardController extends ApiController
         return $this->respondWithError("No logo file provided");
     }
 
+    public function uploadAppFavicon(Request $request)
+    {
+        $request->validate([
+            'favicon' => 'required|image|mimes:jpeg,png,jpg,gif,ico|max:2048',
+        ]);
+        $file = $request->file('favicon');
+
+        if ($file) {
+            $filename = 'favicon.' . $file->getClientOriginalExtension();
+            $file->move(public_path('/'), $filename);
+
+            return $this->respondWithSuccess("Favicon updated successfully");
+        }
+
+        return $this->respondWithError("No favicon file provided");
+    }
+
     public function getStats(){
 
         $admin = auth("admin")->user();

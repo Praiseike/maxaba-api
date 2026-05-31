@@ -11,4 +11,12 @@ class Amenity extends Model
 
     protected $fillable = ['name', 'image'];
 
+    public function getImageAttribute($value)
+    {
+        if ($value && !\Str::startsWith($value, ['http://', 'https://'])) {
+            return url('/storage/' . $value);
+        }
+        return $value;
+    }
+
 }

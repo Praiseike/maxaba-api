@@ -5,21 +5,24 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class VerificationTokenMail extends Mailable implements ShouldQueue
+class BroadcastMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
+    public $subjectStr;
+    public $messageStr;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public $token)
+    public function __construct(string $subjectStr, string $messageStr)
     {
-        //
+        $this->subjectStr = $subjectStr;
+        $this->messageStr = $messageStr;
     }
 
     /**
@@ -28,8 +31,11 @@ class VerificationTokenMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Verification Token Mail',
-            from: new Address(config('mail.from.address'), config('mail.from.name'))
+            from: new \Illuminate\Mail\Mailables\Address(
+                config('mail.from.address', 'hello@maxaba.com'),
+                config('mail.from.name', 'Maxaba')
+            ),
+            subject: $this->subjectStr,
         );
     }
 
@@ -39,7 +45,11 @@ class VerificationTokenMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mail.verify-token',
+            view: 'mail.broadcast',
+            with: [
+                'bodyMessage' => $this->messageStr,
+                'subject' => $this->subjectStr,
+            ],
         );
     }
 

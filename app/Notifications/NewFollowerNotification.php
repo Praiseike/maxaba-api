@@ -27,7 +27,7 @@ class NewFollowerNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
     }
 
     /**
@@ -36,8 +36,9 @@ class NewFollowerNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->subject('New Follower Alert')
+                    ->line("{$this->user->name} has started following you on Maxaba!")
+                    ->action('View Profile', url('/profile/' . $this->user->uuid))
                     ->line('Thank you for using our application!');
     }
 

@@ -28,13 +28,34 @@ class PropertiesController extends ApiController
         //     return $this->errorForbidden("Must be an approved agent");
         // }
         
+        if ($request->has('price')) {
+            $price = str_replace(',', '', $request->input('price'));
+            $request->merge(['price' => $price]);
+        }
+
         $validated = $request->validate([
             'occupant_type' => 'required|in:single,multiple,both',
             'category_id' => 'nullable|exists:categories,id',
             'location' => 'required|string',
-            'title' => 'required|string',
+            'title' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count($value) > 30) {
+                        $fail('The title must not exceed 30 words.');
+                    }
+                }
+            ],
             'price' => 'required|numeric|min:0',
-            'description' => 'required|string',
+            'description' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count($value) > 300) {
+                        $fail('The description must not exceed 300 words.');
+                    }
+                }
+            ],
             'bedrooms' => 'required|integer|min:0',
             'bathrooms' => 'required|integer|min:0',
             'kitchens' => 'required|integer|min:0',
@@ -105,10 +126,31 @@ class PropertiesController extends ApiController
             return $this->errorNotFound('Property not found');
         }
 
+        if ($request->has('price')) {
+            $price = str_replace(',', '', $request->input('price'));
+            $request->merge(['price' => $price]);
+        }
+
         $validated = $request->validate([
-            'title' => 'sometimes|string',
+            'title' => [
+                'sometimes',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count($value) > 30) {
+                        $fail('The title must not exceed 30 words.');
+                    }
+                }
+            ],
             'price' => 'sometimes|numeric|min:0',
-            'description' => 'sometimes|string',
+            'description' => [
+                'sometimes',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (str_word_count($value) > 300) {
+                        $fail('The description must not exceed 300 words.');
+                    }
+                }
+            ],
             'bedrooms' => 'sometimes|integer|min:0',
             'bathrooms' => 'sometimes|integer|min:0',
             'kitchens' => 'sometimes|integer|min:0',
@@ -120,6 +162,15 @@ class PropertiesController extends ApiController
             'files.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'delete_images' => 'sometimes|array',
             'delete_images.*' => 'string',
+            'offer_type' => 'sometimes|in:rent,sale',
+            'offer_duration' => 'sometimes|nullable|string',
+            'category_id' => 'sometimes|nullable|exists:categories,id',
+            'occupant_type' => 'sometimes|in:single,multiple,both',
+            'other_information' => 'sometimes|nullable|array',
+            'charges' => 'sometimes|nullable|array',
+            'charges.agent_percentage' => 'sometimes|numeric|min:0',
+            'charges.caution_percentage' => 'sometimes|numeric|min:0',
+            'charges.legal_percentage' => 'sometimes|numeric|min:0',
         ]);
 
         // Handle image deletions
@@ -346,7 +397,13 @@ class PropertiesController extends ApiController
 
     public function favourite(Property $property)
     {
-        auth()->user()->favourites()->syncWithoutDetaching([$property->id]);
+        $user = auth()->user();
+        $user->favourites()->syncWithoutDetaching([$property->id]);
+
+        if ($property->user_id !== $user->id) {
+            $property->user->notify(new \App\Notifications\PropertyLikedNotification($user, $property));
+        }
+
         return $this->respondWithSuccess('Property favourited');
     }
 
@@ -387,5 +444,19 @@ class PropertiesController extends ApiController
         return $this->respondWithSuccess("Property marked as rented", $property);
     }
 
+    public function reportProperty(Request $request, Property $property)
+    {
+        $request->validate([
+            'reason' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
 
+        $report = $property->reports()->create([
+            'user_id' => auth()->id(),
+            'reason' => $request->reason,
+            'description' => $request->description,
+        ]);
+
+        return $this->respondWithSuccess("Property reported successfully", $report);
+    }
 }

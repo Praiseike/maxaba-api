@@ -299,4 +299,35 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Send broadcast email to users/agents
+     */
+    public function sendBroadcastEmail(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'target' => 'required|in:all,agents,users',
+        ]);
+
+        $query = \App\Models\User::query();
+
+        if ($request->target === 'agents') {
+            $query->where('account_type', 'agent');
+        } elseif ($request->target === 'users') {
+            $query->where('account_type', 'user');
+        }
+
+        $users = $query->get();
+
+        foreach ($users as $user) {
+            Mail::to($user->email)->send(new \App\Mail\BroadcastMail($request->subject, $request->message));
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Broadcast email has been queued to ' . $users->count() . ' users successfully.'
+        ]);
+    }
 }

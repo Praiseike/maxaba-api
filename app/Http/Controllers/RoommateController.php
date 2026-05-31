@@ -52,7 +52,20 @@ class RoommateController extends ApiController
             "category_id" => "required|exists:categories,id",
             "interests" => "required|array",
             "interests.*" => "string",
+            "title" => "nullable|string|max:255",
+            "house_image" => "nullable|image|mimes:jpeg,png,jpg,webp|max:2048",
+            "map" => "nullable|string",
         ]);
+
+        if ($request->hasFile('house_image')) {
+            $path = $request->file('house_image')->store('roommates', 'public');
+            $validated['house_image'] = $path;
+        }
+
+        if (isset($validated['map'])) {
+            $validated['map'] = json_decode($validated['map'], true);
+        }
+
         $validated['user_id'] = auth()->user()->id;
 
         $user = auth()->user();

@@ -12,17 +12,18 @@ class NotificationsController extends ApiController
     {
         $user = auth()->user();
 
-        // Fetch notifications for the authenticated user
-        $notifications = $user->notifications()->get([
-            'id',
-            'data',
-            'read_at',
-            'created_at'
-        ])->whereNull('read_at')->sortByDesc('created_at');
+        // Fetch both read and unread notifications for the authenticated user, sorted by created_at desc
+        $notifications = $user->notifications()
+            ->orderBy('created_at', 'desc')
+            ->get(['id', 'data', 'read_at', 'created_at']);
 
-        $notifications->map(callback: function ($notification) {
-            $notification->markAsRead();
-        });
+        // Mark only unread ones as read so they are updated, but keep returning them
+        foreach ($notifications as $notification) {
+            if (is_null($notification->read_at)) {
+                $notification->markAsRead();
+                $notification->read_at = now();
+            }
+        }
 
         return $this->respondWithSuccess('Notifications retrieved successfully', $notifications);
     }
@@ -31,13 +32,18 @@ class NotificationsController extends ApiController
     {
         $user = auth()->user();
 
+        $unreadMessagesCount = Conversation::where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                      ->orWhere('recipient_id', $user->id);
+            })
+            ->whereHas('messages', function ($query) use ($user) {
+                $query->where('user_id', '!=', $user->id)
+                      ->whereNull('read_at');
+            })->count();
+
         return $this->respondWithSuccess("Fetched notification stats", [
             'unread_count' => $user->notifications()->whereNull('read_at')->count(),
-            'unread_messages_count' => Conversation::where('user_id', $user->id)
-                ->orWhere('recipient_id', $user->id)
-                ->whereHas('messages', function ($query) {
-                    $query->whereNull('read_at');
-                })->count(),
+            'unread_messages_count' => $unreadMessagesCount,
         ]);
     }
 }

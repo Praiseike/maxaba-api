@@ -60,6 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('amenities')->group(function () {
         Route::post('/', [CategoriesController::class, 'createAmenity']);
         Route::get('/', [CategoriesController::class, 'getAmenities']);
+        Route::put('/{id}', [CategoriesController::class, 'updateAmenity']);
+        Route::delete('/{id}', [CategoriesController::class, 'deleteAmenity']);
     });
 
 
@@ -83,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('admins/{id}/resend-credentials', [AdminController::class, 'resendCredentials']);
     Route::patch('admins/{id}/toggle-status', [AdminController::class, 'toggleStatus']);
     Route::post('admins/bulk-action', [AdminController::class, 'bulkAction']);
+    Route::post('admins/broadcast-email', [AdminController::class, 'sendBroadcastEmail']);
     
  
 });
