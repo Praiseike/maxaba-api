@@ -29,8 +29,7 @@ class VerificationTokenMail extends Mailable
     {
         return new Envelope(
             subject: 'Verification Token Mail',
-            from: new Address('noreply@maxaba.com', 'Maxaba')
-
+            from: new Address(config('mail.from.address'), config('mail.from.name'))
         );
     }
 
