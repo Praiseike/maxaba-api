@@ -27,7 +27,7 @@ class MissedCallNotification extends Notification implements ShouldQueue
         return (new MailMessage)
                     ->subject("Missed {$this->callType} call")
                     ->line("You missed a {$this->callType} call from {$this->user->name}.")
-                    ->action('Call Back', url("/chat"))
+                    ->action('Call Back', rtrim(config('app.frontend_url'), '/') . '/inbox')
                     ->line('Thank you for using our application!');
     }
 

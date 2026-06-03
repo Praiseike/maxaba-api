@@ -19,7 +19,7 @@ class NotificationsController extends ApiController
 
         // Mark only unread ones as read so they are updated, but keep returning them
         foreach ($notifications as $notification) {
-            if (is_null($notification->read_at)) {
+            if (is_null($notification->read_at) || $notification->read_at == false) {
                 $notification->markAsRead();
                 $notification->read_at = now();
             }

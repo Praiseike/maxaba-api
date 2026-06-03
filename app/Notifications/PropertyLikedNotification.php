@@ -25,10 +25,14 @@ class PropertyLikedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
+        $categoryName = $this->property->category?->name ?? 'property';
+        $formattedCategory = str_replace(' ', '-', strtolower($categoryName));
+        $propertyUrl = rtrim(config('app.frontend_url'), '/') . '/' . $formattedCategory . '/' . $this->property->slug;
+
         return (new MailMessage)
                     ->subject('Your Property Was Liked!')
                     ->line("{$this->user->name} liked your property \"{$this->property->title}\" on Maxaba.")
-                    ->action('View Property', url("/property/{$this->property->slug}"))
+                    ->action('View Property', $propertyUrl)
                     ->line('Thank you for using our application!');
     }
 
