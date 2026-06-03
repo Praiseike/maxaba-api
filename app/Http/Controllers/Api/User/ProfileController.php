@@ -81,14 +81,14 @@ class ProfileController extends ApiController
             "last_name" => "required|string",
             // "ethnicity" => "nullable|string",
             "phone_number" => "required|string",
+            "whatsapp_number" => "nullable|string|max:15",
             "password" => "required|string",
             "password_confirmation" => "required|string|same:password",
         ]);
 
 
         $user = $request->user();
-        // $user->update($request->only("first_name", "ethnicity" , "last_name", "phone_number", "password"));
-        $user->update($request->only("first_name", "last_name", "phone_number", "password"));
+        $user->update($request->only("first_name", "last_name", "phone_number", "whatsapp_number", "password"));
         $user->save();
 
         return $this->respondWithSuccess("Updated profile", $user);

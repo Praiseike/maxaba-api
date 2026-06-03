@@ -151,7 +151,7 @@ class ChatController extends ApiController
             ->withCount([
                 'messages as unread_count' => function ($query) use ($userId) {
                     $query->where('user_id', '!=', $userId)
-                        ->where('read_at', null);
+                        ->where('is_read', false);
                 }
             ])
             ->orderBy('last_message_at', 'desc')
