@@ -36,10 +36,10 @@ class NewFollowerNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject('New Follower Alert')
-                    ->line("{$this->user->name} has started following you on Maxaba!")
-                    ->action('View Profile',  rtrim(config('app.frontend_url'), '/') . '/'.$this->user->uuid)
-                    ->line('Thank you for using our application!');
+            ->subject('New Follower Alert')
+            ->line("{$this->user->name} has started following you on Maxaba!")
+            ->action('View Profile', rtrim(config('app.frontend_url'), '/') . "/profile\/" . $this->user->uuid)
+            ->line('Thank you for using our application!');
     }
 
     /**
