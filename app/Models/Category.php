@@ -13,7 +13,7 @@ class Category extends Model
 
     public function getImageAttribute($value)
     {
-        if ($value && !\Str::startsWith($value, ['http://', 'https://'])) {
+        if ($value && !\Str::startsWith($value, ['http://', 'https://', 'ph-'])) {
             return url('/storage/' . $value);
         }
         return $value;
