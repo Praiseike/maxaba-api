@@ -43,6 +43,9 @@ class ProfileController extends ApiController
     public function getUser(Request $request, User $user)
     {
 
+        $currentUser = $request->user();
+        $sameUser = $currentUser && $currentUser->id == $user->id;
+
         $response = [
             "id" => $user->id,
             "uuid" => $user->uuid,
@@ -57,7 +60,7 @@ class ProfileController extends ApiController
             'followers' => $user->followers()->count(),
             'following' => $user->following()->count(),
             'bio' => $user->bio,
-            'properties' => $user->properties()->with('category')->get(),
+            'properties' => $sameUser ? $user->properties()->with('category')->get() : $user->properties()->with('category')->where('status', 'approved')->get()    ,
             'location' => $user->location,
         ];
 
