@@ -216,7 +216,7 @@ class PropertiesController extends ApiController
             $query->where('category_id', $request->type);
         }
 
-        if ($request->filled('lat') && $request->filled('lng')) {
+        if ($request->filled('lat') && $request->filled('lng') && $request->lat !== "null" && $request->lng !== "null") {
             $lat = $request->lat;
             $lng = $request->lng;
         
