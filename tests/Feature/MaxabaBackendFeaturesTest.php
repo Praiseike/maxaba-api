@@ -329,4 +329,23 @@ class MaxabaBackendFeaturesTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseMissing('amenities', ['id' => $amenityId]);
     }
+
+    /** @test */
+    public function it_sends_new_message_notification_with_inbox_action_url()
+    {
+        $user = User::factory()->create();
+        $sender = User::factory()->create();
+        $message = new \App\Models\Message([
+            'user_id' => $sender->id,
+            'content' => 'Hello there!',
+            'type' => 'text',
+        ]);
+
+        $notification = new NewMessageNotification($sender, $message);
+        $mailData = $notification->toMail($user);
+
+        $this->assertEquals('New Message Received', $mailData->subject);
+        $this->assertEquals(rtrim(config('app.frontend_url'), '/') . '/inbox', $mailData->actionUrl);
+    }
 }
+

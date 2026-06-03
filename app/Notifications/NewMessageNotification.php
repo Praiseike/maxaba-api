@@ -33,7 +33,7 @@ class NewMessageNotification extends Notification implements ShouldQueue
                     ->subject('New Message Received')
                     ->line("You have a new message from {$this->user->name}:")
                     ->line($preview)
-                    ->action('Reply in Chat', url("/chat"))
+                    ->action('Reply in Chat', rtrim(config('app.frontend_url'), '/') . '/inbox')
                     ->line('Thank you for using our application!');
     }
 
