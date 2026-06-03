@@ -64,7 +64,9 @@ class ChatController extends ApiController
             ->orderBy('created_at', 'asc')
             ->get();
         $messages->each(function (Message $message) {
-            $message->markAsRead();
+            if ($message->user_id != auth()->id()) {
+                $message->markAsRead();
+            }
         });
         return $this->respondWithSuccess("Fetched messages", $messages);
     }
