@@ -216,4 +216,20 @@ class PropertiesController extends ApiController
             'pending_houses' => Property::where('status', Status::PENDING)->count(),
         ]);
     }
+
+    public function getReports(Request $request)
+    {
+        $reports = \App\Models\ReportedProperty::with(['user', 'property.category', 'property.user'])->latest()->paginate();
+        return $this->respondWithSuccess("Reports fetched successfully", $reports);
+    }
+
+    public function dismissReport(Request $request, $id)
+    {
+        $report = \App\Models\ReportedProperty::find($id);
+        if (!$report) {
+            return $this->errorNotFound('Report not found');
+        }
+        $report->delete();
+        return $this->respondWithSuccess("Report dismissed successfully");
+    }
 }
