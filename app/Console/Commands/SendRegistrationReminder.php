@@ -31,20 +31,19 @@ class SendRegistrationReminder extends Command
                       ->orWhere('first_name', '')
                       ->orWhere('last_name', '');
             })
-            ->where('registration_reminder_sent', false)
-            ->where('created_at', '<=', now()->subDay())
             ->get();
 
-        $this->info("Found {$users->count()} users with incomplete registration.");
-
+        $count = 0;
         foreach ($users as $user) {
-            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\RegistrationReminderMail());
-            $user->registration_reminder_sent = true;
-            $user->save();
-
-            $this->info("Sent registration reminder email to: {$user->email}");
+            $days = $user->created_at->startOfDay()->diffInDays(now()->startOfDay());
+            
+            // Send reminder every 3 days after registration
+            if ($days > 0 && $days % 3 === 0) {
+                \App\Jobs\SendProfileCompletionReminder::dispatch($user);
+                $count++;
+            }
         }
 
-        $this->info('Registration reminders processed successfully.');
+        $this->info("Dispatched profile completion reminders for {$count} users.");
     }
 }
