@@ -24,6 +24,7 @@ Route::post('/auth/verify', [AuthController::class, 'verifyToken']);
 
 
 Route::get('/maintenance/status', [ServerController::class, 'status']);
+Route::get('/branding', [ServerController::class, 'getBranding']);
 Route::get('/seo/{slug}', [SeoController::class, 'show']);
 Route::get('/seo', [SeoController::class, 'index']);
 

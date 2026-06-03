@@ -24,4 +24,27 @@ class ServerController extends Controller
             'data' => $status
         ]);
     }
+
+    public function getBranding()
+    {
+        $logoUrl = null;
+        $faviconUrl = null;
+
+        // Search public directory for logo.*
+        $logoFiles = glob(public_path('logo.*'));
+        if (!empty($logoFiles)) {
+            $logoUrl = url(basename($logoFiles[0]));
+        }
+
+        // Search public directory for favicon.*
+        $faviconFiles = glob(public_path('favicon.*'));
+        if (!empty($faviconFiles)) {
+            $faviconUrl = url(basename($faviconFiles[0]));
+        }
+
+        return response()->json([
+            'logo_url' => $logoUrl,
+            'favicon_url' => $faviconUrl,
+        ]);
+    }
 }
