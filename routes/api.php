@@ -49,6 +49,7 @@ Route::prefix('open')->group(function () {
 });
 
 Route::get('/categories', [CategoriesController::class, 'getCategories']);
+Route::get('/amenities', [CategoriesController::class, 'getAmenities']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
