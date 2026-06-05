@@ -33,6 +33,7 @@ Route::get('seo/landing/public', [App\Http\Controllers\Api\Admin\SeoSettingContr
 // Public property-related routes
 Route::prefix('open')->group(function () {
     Route::get('roommates', [RoommateController::class, 'index']);
+    Route::get('roommates/{id}', [RoommateController::class, 'show']);
 
     Route::prefix('properties')->group(function () {
         Route::get('/search', [PropertiesController::class, 'searchProperties']);
@@ -73,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Roommates
     Route::prefix('roommates')->group(function () {
         Route::post('/', [RoommateController::class, 'store']);
+        Route::post('/{id}', [RoommateController::class, 'update']);
         Route::delete('/{id}', [RoommateController::class, 'destroy']);
 
     });
