@@ -68,14 +68,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}', [CategoriesController::class, 'updateAmenity']);
         Route::delete('/{id}', [CategoriesController::class, 'deleteAmenity']);
     });
-
+    
+    Route::post('/broadcast-email', [AdminController::class, 'sendBroadcastEmail']);
 
     Route::prefix('maintenance')->group(function () {
         Route::get('/', [MaintenanceModeController::class, 'index']);
         Route::put('/', [MaintenanceModeController::class, 'update']);
         Route::post('/toggle', [MaintenanceModeController::class, 'toggle']);
     });
-
+    
     Route::post('/app-logo', [DashboardController::class, 'uploadAppLogo']);
     Route::post('/app-favicon', [DashboardController::class, 'uploadAppFavicon']);
 
@@ -90,7 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('admins/{id}/resend-credentials', [AdminController::class, 'resendCredentials']);
     Route::patch('admins/{id}/toggle-status', [AdminController::class, 'toggleStatus']);
     Route::post('admins/bulk-action', [AdminController::class, 'bulkAction']);
-    Route::post('admins/broadcast-email', [AdminController::class, 'sendBroadcastEmail']);
     
  
 });
