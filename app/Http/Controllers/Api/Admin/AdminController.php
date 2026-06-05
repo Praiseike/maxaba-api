@@ -308,7 +308,7 @@ class AdminController extends Controller
         $request->validate([
             'subject' => 'required|string|max:255',
             'message' => 'required|string',
-            'target' => 'required|in:all,agents,users',
+            'target' => 'required|in:all,agents,users,incomplete_registration',
         ]);
 
         $query = \App\Models\User::query();
@@ -317,6 +317,10 @@ class AdminController extends Controller
             $query->where('account_type', 'agent');
         } elseif ($request->target === 'users') {
             $query->where('account_type', 'user');
+        } elseif ($request->target === 'incomplete_registration') {
+            $query->where(function($q) {
+                $q->whereNull('first_name')->orWhereNull('last_name');
+            });
         }
 
         $users = $query->get();
