@@ -40,6 +40,7 @@ class Property extends Model
         'status',
         'other_information',
         'charges',
+        'views',
     ];
 
     protected $casts = [

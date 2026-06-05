@@ -322,6 +322,8 @@ class PropertiesController extends ApiController
             return $this->errorNotFound('Property not found');
         }
 
+        $property->increment('views');
+
         $property['other_listings_by_user'] = Property::where('user_id', $property->user_id)
             ->where('id', '!=', $property->id)
             ->where('status', Status::APPROVED)
