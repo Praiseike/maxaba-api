@@ -326,9 +326,7 @@ class AdminController extends Controller
         $users = $query->get();
 
         foreach ($users as $user) {
-            if(str_contains($user->email, "praiseike")){
-                Mail::to($user->email)->send(new \App\Mail\BroadcastMail($request->subject, $request->message));
-            }
+            Mail::to($user->email)->send(new \App\Mail\BroadcastMail($request->subject, $request->message));
         }
 
         return response()->json([
